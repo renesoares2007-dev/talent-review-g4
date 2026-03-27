@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #120d00;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* G4 Brand Colors - Scaling Blue */
+  --color-g4-purple: #1a2744;
+  --color-g4-purple-light: #24355a;
+  --color-g4-purple-dark: #111b33;
+  --color-g4-magenta: #b40082;
+  --color-g4-magenta-light: #d0009a;
+  --color-g4-magenta-dark: #8f0068;
+  --color-g4-lime: #d8ea30;
+  --color-g4-lime-dark: #b5c420;
+  --color-g4-gold: #c9a96e;
+  --color-g4-gold-light: #e0c690;
+  --color-g4-burgundy: #2a3a5c;
+  --color-g4-green: #428714;
+  --color-g4-green-light: #4fa018;
+  --color-g4-dark: #0d1520;
+}
+
+/* Dark mode disabled - app uses light theme only */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}

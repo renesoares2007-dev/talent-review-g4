@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ==================== EMPRESA & VALORES ====================
+
+model CompanyValue {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  behaviors   Behavior[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Behavior {
+  id          String       @id @default(uuid())
+  description String
+  valueId     String
+  value       CompanyValue @relation(fields: [valueId], references: [id], onDelete: Cascade)
+  cultureEvaluations CultureEvaluation[]
+  createdAt   DateTime     @default(now())
+}
+
+// ==================== COLABORADORES ====================
+
+model Employee {
+  id                 String   @id @default(uuid())
+  name               String
+  email              String   @unique
+  role               String
+  department         String
+  managerId          String?
+  manager            Employee? @relation("ManagerRelation", fields: [managerId], references: [id])
+  subordinates       Employee[] @relation("ManagerRelation")
+  behavioralProfile  String?   // Armazena caminho do arquivo de perfil
+  behavioralProfileText String? // Texto extraído do perfil
+  photo              String?   // Caminho da foto do colaborador
+  aboutMe            String?   // Sobre mim
+  achievements       String?   // Conquistas (JSON array)
+  recognitions       String?   // Reconhecimentos (JSON array)
+  education          String?   // Formação (JSON array)
+  careerInterests    String?   // Interesses de carreira
+  isAdmin            Boolean  @default(false)
+  isManager          Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Avaliações
+  evaluationsAsSubject   Evaluation[] @relation("EvaluationSubject")
+  evaluationsAsEvaluator Evaluation[] @relation("EvaluationEvaluator")
+  stakeholderLinks       StakeholderLink[]
+}
+
+// ==================== CICLO DE AVALIAÇÃO ====================
+
+model EvaluationCycle {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean  @default(true)
+  evaluations Evaluation[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ==================== AVALIAÇÕES ====================
+
+model Evaluation {
+  id          String   @id @default(uuid())
+  cycleId     String
+  cycle       EvaluationCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  subjectId   String   // Quem está sendo avaliado
+  subject     Employee @relation("EvaluationSubject", fields: [subjectId], references: [id])
+  evaluatorId String   // Quem está avaliando
+  evaluator   Employee @relation("EvaluationEvaluator", fields: [evaluatorId], references: [id])
+  type        String   // "self" | "manager" | "stakeholder"
+  status      String   @default("pending") // "pending" | "in_progress" | "completed"
+
+  // Notas consolidadas
+  cultureScore  Float?
+  resultsScore  Float?
+
+  // Campos textuais
+  strengths      String?  // Pontos Fortes
+  improvements   String?  // Pontos de Oportunidade
+  tags           String?  // JSON array: "risco_turnover" | "potencial_sucessao" | "key_talent" | "high_potential"
+
+  // Avaliações detalhadas
+  cultureEvaluations CultureEvaluation[]
+  resultsEvaluation  ResultsEvaluation?
+  projects           Project[]
+
+  // Link para stakeholder externo
+  stakeholderLink StakeholderLink?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cycleId, subjectId, evaluatorId, type])
+}
+
+model CultureEvaluation {
+  id            String   @id @default(uuid())
+  evaluationId  String
+  evaluation    Evaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  behaviorId    String
+  behavior      Behavior @relation(fields: [behaviorId], references: [id])
+  example       String?  // Exemplo descrito pelo avaliador
+  frequency     Int      // 0-4
+  aiSuggestion  Int?     // Sugestão da IA
+  createdAt     DateTime @default(now())
+}
+
+model ResultsEvaluation {
+  id            String   @id @default(uuid())
+  evaluationId  String   @unique
+  evaluation    Evaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  evidenceFile  String?  // Caminho do arquivo de evidência
+  evidenceText  String?  // Descrição das entregas
+  classification String  // "nao_entrega" | "entrega" | "acima_expectativa"
+  score         Float    // 1-4
+  createdAt     DateTime @default(now())
+}
+
+// ==================== PROJETOS E METAS ====================
+
+model Project {
+  id            String    @id @default(uuid())
+  evaluationId  String
+  evaluation    Evaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  name          String
+  description   String?
+  deliveryPct   Float     @default(100) // % de entrega (0-150+)
+  evidenceFile  String?   // Caminho do arquivo de evidência
+  validated     Boolean   @default(false)
+  validatedAt   DateTime?
+  createdAt     DateTime  @default(now())
+}
+
+model GoalsPanelItem {
+  id          String   @id @default(uuid())
+  cycleId     String
+  subjectId   String
+  goalName    String
+  target      Float    // Meta alvo
+  actual      Float    // Realizado
+  percentage  Float    // (actual/target) * 100
+  createdAt   DateTime @default(now())
+
+  @@index([cycleId, subjectId])
+}
+
+// ==================== LINK PARA STAKEHOLDERS ====================
+
+model StakeholderLink {
+  id            String   @id @default(uuid())
+  evaluationId  String   @unique
+  evaluation    Evaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  employeeId    String
+  employee      Employee @relation(fields: [employeeId], references: [id])
+  token         String   @unique @default(uuid())
+  email         String   // Email do stakeholder
+  name          String   // Nome do stakeholder
+  isCompleted   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+}
+
+// ==================== CONFIGURAÇÕES SLACK ====================
+
+model SlackConfig {
+  id           String   @id @default(uuid())
+  botToken     String?  // xoxb-... Bot User OAuth Token
+  webhookUrl   String?  // https://hooks.slack.com/services/...
+  channel      String?  // Canal padrão para notificações (ex: #avaliacoes)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ==================== CONSOLIDAÇÃO & RESULTADOS ====================
+
+model ConsolidatedResult {
+  id              String   @id @default(uuid())
+  cycleId         String
+  subjectId       String
+  cultureScore    Float
+  resultsScore    Float
+  nineboxPosition String   // "talento_g4" | "game_changer" | "recover" | "dismissal"
+  aiAnalysis      String?  // Análise completa da IA
+  aiFeedback      String?  // Feedback gerado pela IA
+  aiPDI           String?  // PDI gerado pela IA
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([cycleId, subjectId])
+}
