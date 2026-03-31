@@ -5,7 +5,7 @@ import { Providers } from "./providers"
 
 export const metadata: Metadata = {
   title: "Talent Review G4",
-  description: "Avaliacao 360 com Ninebox, PDI e Feedback por IA",
+  description: "Avaliação 360 com Ninebox, PDI e Feedback por IA",
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

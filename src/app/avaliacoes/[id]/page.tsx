@@ -171,7 +171,7 @@ export default function EvaluationFormPage() {
 
     const subj = evaluation.subject as Record<string, string>
     const eType = evaluation.type as string
-    const typeLabel = eType === 'self' ? 'Autoavaliacao' : eType === 'manager' ? 'Avaliacao do Gestor' : 'Avaliacao Stakeholder'
+    const typeLabel = eType === 'self' ? 'Autoavaliação' : eType === 'manager' ? 'Avaliação do Gestor' : 'Avaliação Stakeholder'
 
     // Header
     doc.setFillColor(26, 39, 68)
@@ -188,7 +188,7 @@ export default function EvaluationFormPage() {
     // Culture
     addText('Eixo 1: Cultura (Valores e Comportamentos)', 13, [26, 39, 68], true)
     y += 4
-    const freqLabels = ['Nunca', 'Raramente', 'As vezes', 'Sempre', 'Referencia']
+    const freqLabels = ['Nunca', 'Raramente', 'Às vezes', 'Sempre', 'Referência']
     for (const b of behaviors) {
       addText(`${b.valueName} - ${b.behaviorDescription}: ${freqLabels[b.frequency]} (${b.frequency}/4)`, 9, [50, 50, 50])
       if (b.example) { addText(`  Exemplo: ${b.example}`, 8, [100, 100, 100]) }
@@ -199,8 +199,8 @@ export default function EvaluationFormPage() {
     y += 4
     addText('Eixo 2: Resultados', 13, [26, 39, 68], true)
     y += 2
-    const classLabel = results.classification === 'acima_expectativa' ? 'Acima da expectativa' : results.classification === 'entrega' ? 'Entrega resultados' : 'Nao entrega'
-    addText(`Classificacao: ${classLabel} (${results.score}/4)`, 10, [50, 50, 50], true)
+    const classLabel = results.classification === 'acima_expectativa' ? 'Acima da expectativa' : results.classification === 'entrega' ? 'Entrega resultados' : 'Não entrega'
+    addText(`Classificação: ${classLabel} (${results.score}/4)`, 10, [50, 50, 50], true)
     if (results.evidenceText) { y += 2; addText(results.evidenceText, 9, [80, 80, 80]) }
 
     // Strengths & Improvements
@@ -219,7 +219,7 @@ export default function EvaluationFormPage() {
       doc.setFontSize(8)
       doc.setTextColor(150, 150, 150)
       doc.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')} - Talent Review G4`, margin, 290)
-      doc.text(`Pagina ${i}/${totalPages}`, pageWidth - margin - 20, 290)
+      doc.text(`Página ${i}/${totalPages}`, pageWidth - margin - 20, 290)
     }
 
     const empName = (subj?.name || 'avaliacao').toLowerCase().replace(/\s+/g, '-')
@@ -231,14 +231,14 @@ export default function EvaluationFormPage() {
   const subject = evaluation.subject as Record<string, string>
   const evalType = evaluation.type as string
   const isReadOnly = (evaluation.status as string) === 'completed'
-  const frequencyLabels = ['Nunca apresenta', 'Raramente apresenta', 'As vezes apresenta', 'Sempre apresenta', 'E uma referencia']
+  const frequencyLabels = ['Nunca apresenta', 'Raramente apresenta', 'Às vezes apresenta', 'Sempre apresenta', 'É uma referência']
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-g4-purple">
-            {evalType === 'self' ? 'Autoavaliacao' : evalType === 'manager' ? 'Avaliacao do Gestor' : 'Avaliacao Stakeholder'}
+            {evalType === 'self' ? 'Autoavaliação' : evalType === 'manager' ? 'Avaliação do Gestor' : 'Avaliação Stakeholder'}
           </h1>
           <p className="text-gray-500">Avaliado: <strong>{subject?.name}</strong> - {subject?.role} ({subject?.department})</p>
         </div>
@@ -275,14 +275,14 @@ export default function EvaluationFormPage() {
             </div>
 
             <div className="mb-3">
-              <label className="block text-sm text-gray-600 mb-1">Descreva exemplos de quando o valor foi ou nao atendido:</label>
+              <label className="block text-sm text-gray-600 mb-1">Descreva exemplos de quando o valor foi ou não atendido:</label>
               <textarea rows={2} value={b.example} readOnly={isReadOnly}
                 onChange={e => { const u = [...behaviors]; u[i] = { ...u[i], example: e.target.value }; setBehaviors(u) }}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800" placeholder="Descreva situacoes concretas..." />
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800" placeholder="Descreva situações concretas..." />
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-600">Frequencia:</label>
+              <label className="text-sm text-gray-600">Frequência:</label>
               <select value={b.frequency} disabled={isReadOnly}
                 onChange={e => { const u = [...behaviors]; u[i] = { ...u[i], frequency: parseInt(e.target.value) }; setBehaviors(u) }}
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800">
@@ -294,7 +294,7 @@ export default function EvaluationFormPage() {
               {!isReadOnly && b.example && (
                 <button onClick={() => askAISuggestion(i)} disabled={aiLoading === b.behaviorId}
                   className="text-xs bg-blue-700 text-white px-3 py-1.5 rounded hover:bg-blue-800 disabled:opacity-50">
-                  {aiLoading === b.behaviorId ? 'Consultando IA...' : 'Sugestao IA'}
+                  {aiLoading === b.behaviorId ? 'Consultando IA...' : 'Sugestão IA'}
                 </button>
               )}
             </div>
@@ -307,7 +307,7 @@ export default function EvaluationFormPage() {
         <h2 className="text-lg font-semibold text-g4-dark mb-4">Eixo 2: Resultados (Entregas e Metas)</h2>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Descricao das entregas e resultados</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Descrição das entregas e resultados</label>
           <textarea rows={4} value={results.evidenceText} readOnly={isReadOnly}
             onChange={e => setResults({ ...results, evidenceText: e.target.value })}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800"
@@ -315,7 +315,7 @@ export default function EvaluationFormPage() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Upload de Evidencias (planilhas, graficos, etc)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Upload de Evidências (planilhas, gráficos, etc)</label>
           {!isReadOnly && (
             <input type="file" onChange={e => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
               className="text-sm text-gray-800" />
@@ -326,10 +326,10 @@ export default function EvaluationFormPage() {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Classificacao</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Classificação</label>
           <div className="flex gap-4">
             {[
-              { value: 'nao_entrega', label: 'Nao entrega resultados', score: 1 },
+              { value: 'nao_entrega', label: 'Não entrega resultados', score: 1 },
               { value: 'entrega', label: 'Entrega resultados', score: 2.5 },
               { value: 'acima_expectativa', label: 'Acima da expectativa', score: 4 },
             ].map(opt => (
@@ -376,7 +376,7 @@ export default function EvaluationFormPage() {
           </button>
           <button onClick={() => handleSave(true)} disabled={saving}
             className="bg-blue-700 text-white px-6 py-2 rounded-lg hover:bg-blue-800 disabled:opacity-50">
-            {saving ? 'Salvando...' : 'Concluir Avaliacao'}
+            {saving ? 'Salvando...' : 'Concluir Avaliação'}
           </button>
         </div>
       )}

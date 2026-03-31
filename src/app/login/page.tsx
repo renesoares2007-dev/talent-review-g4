@@ -9,7 +9,7 @@ function LoginErrorHandler({ onError }: { onError: (msg: string) => void }) {
   useEffect(() => {
     const err = searchParams.get('error')
     if (err === 'not_registered') {
-      onError('Seu email Google nao esta cadastrado no sistema. Solicite ao administrador.')
+      onError('Seu email Google não está cadastrado no sistema. Solicite ao administrador.')
     }
   }, [searchParams, onError])
   return null
@@ -17,7 +17,7 @@ function LoginErrorHandler({ onError }: { onError: (msg: string) => void }) {
 
 export default function LoginPage() {
   const router = useRouter()
-  const [employees, setEmployees] = useState<{ id: string; name: string; email: string; role: string; isAdmin: boolean; isManager: boolean }[]>([])
+  const [employees, setEmployees] = useState<{ id: string; name: string; email: string; role: string; isAdmin: boolean; isManager: boolean; isBP: boolean }[]>([])
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -34,7 +34,7 @@ export default function LoginPage() {
     e.preventDefault()
     const employee = employees.find(emp => emp.email === email.trim().toLowerCase())
     if (!employee) {
-      setError('Email nao encontrado. Verifique e tente novamente.')
+      setError('Email não encontrado. Verifique e tente novamente.')
       return
     }
     localStorage.setItem('user', JSON.stringify(employee))
@@ -60,7 +60,7 @@ export default function LoginPage() {
             <Logo size="lg" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-1">Talent Review G4</h1>
-          <p className="text-g4-gold-light text-sm">Avaliacao 360 com Ninebox, PDI e Feedback por IA</p>
+          <p className="text-g4-gold-light text-sm">Avaliação 360 com Ninebox, PDI e Feedback por IA</p>
         </div>
 
         {/* Login Card */}
@@ -129,7 +129,7 @@ export default function LoginPage() {
           {/* Quick Access */}
           {employees.length > 0 && (
             <div className="mt-6 pt-6 border-t border-gray-100">
-              <p className="text-xs text-gray-400 mb-3 uppercase tracking-wide">Acesso rapido (demo)</p>
+              <p className="text-xs text-gray-400 mb-3 uppercase tracking-wide">Acesso rápido (demo)</p>
               <div className="space-y-2">
                 {employees.map(emp => (
                   <button
@@ -145,7 +145,8 @@ export default function LoginPage() {
                       <div className="text-xs text-gray-400 truncate">{emp.role}</div>
                     </div>
                     {emp.isAdmin && <span className="text-xs bg-g4-purple/10 text-g4-purple px-2 py-0.5 rounded-full">Admin</span>}
-                    {emp.isManager && !emp.isAdmin && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Gestor</span>}
+                    {emp.isBP && !emp.isAdmin && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">BP</span>}
+                    {emp.isManager && !emp.isAdmin && !emp.isBP && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Gestor</span>}
                   </button>
                 ))}
               </div>
@@ -153,7 +154,7 @@ export default function LoginPage() {
           )}
         </div>
 
-        <p className="text-center text-g4-gold/70 text-xs mt-6">Codigo de Cultura G4 Educacao</p>
+        <p className="text-center text-g4-gold/70 text-xs mt-6">Código de Cultura G4 Educação</p>
       </div>
       <Suspense>
         <LoginErrorHandler onError={setError} />

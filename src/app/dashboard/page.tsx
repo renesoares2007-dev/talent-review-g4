@@ -74,7 +74,7 @@ export default function DashboardPage() {
       body: JSON.stringify({ cycleId: selectedCycle, subjectId }),
     })
     setConsolidating(null)
-    alert('Consolidacao concluida! Veja o resultado no Ninebox ou Relatorio.')
+    alert('Consolidação concluída! Veja o resultado no Ninebox ou Relatório.')
   }
 
   return (
@@ -124,7 +124,7 @@ export default function DashboardPage() {
           <div className="text-2xl font-bold text-red-600">
             {team.filter(e => getEmployeeStatus(e.id).total === 0).length}
           </div>
-          <div className="text-sm text-gray-500">Sem Avaliacao</div>
+          <div className="text-sm text-gray-500">Sem Avaliação</div>
         </div>
       </div>
 
@@ -139,7 +139,7 @@ export default function DashboardPage() {
               <th className="text-center px-4 py-3 font-medium text-gray-600">Gestor</th>
               <th className="text-center px-4 py-3 font-medium text-gray-600">Stakeholders</th>
               <th className="text-center px-4 py-3 font-medium text-gray-600">Progresso</th>
-              <th className="text-center px-4 py-3 font-medium text-gray-600">Acoes</th>
+              <th className="text-center px-4 py-3 font-medium text-gray-600">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -175,7 +175,7 @@ export default function DashboardPage() {
                           {consolidating === emp.id ? '...' : 'Consolidar'}
                         </button>
                         <a href={`/relatorio?cycleId=${selectedCycle}&subjectId=${emp.id}`}
-                          className="text-xs bg-gray-600 text-white px-2 py-1 rounded hover:bg-gray-700">Relatorio</a>
+                          className="text-xs bg-gray-600 text-white px-2 py-1 rounded hover:bg-gray-700">Relatório</a>
                       </div>
                     )}
                   </td>

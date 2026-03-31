@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     // If no messages yet, add a trigger
     if (aiMessages.length === 0) {
-      aiMessages.push({ role: 'user', content: 'Ola, estou pronto para iniciar a avaliacao.' })
+      aiMessages.push({ role: 'user', content: 'Olá, estou pronto para iniciar a avaliação.' })
     }
 
     const aiResponse = await callAI(aiMessages, systemPrompt)

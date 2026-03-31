@@ -506,7 +506,7 @@ export default function TalentCardPage() {
       doc.setTextColor(...G4.gray)
       const pageH = doc.internal.pageSize.getHeight()
       doc.text(`Talent Review G4 - Gerado em ${new Date().toLocaleDateString('pt-BR')}`, margin, pageH - 8)
-      doc.text(`Pagina ${i} de ${totalPages}`, pageWidth - margin, pageH - 8, { align: 'right' })
+      doc.text(`Página ${i} de ${totalPages}`, pageWidth - margin, pageH - 8, { align: 'right' })
     }
 
     doc.save(`talent-card-${user.name.replace(/\s+/g, '-').toLowerCase()}.pdf`)
@@ -624,7 +624,7 @@ export default function TalentCardPage() {
         <EditableText
           value={user.aboutMe || ''}
           onSave={val => updateProfile('aboutMe', val)}
-          placeholder="Conte um pouco sobre voce, sua trajetoria e o que te motiva..."
+          placeholder="Conte um pouco sobre você, sua trajetória e o que te motiva..."
           multiline
         />
       </div>
@@ -697,7 +697,7 @@ export default function TalentCardPage() {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-g4-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
-            Avaliacoes Recebidas (Historico)
+            Avaliações Recebidas (Histórico)
           </h3>
           <div className="space-y-4">
             {evaluations.filter(ev => ev.status === 'completed').map((ev) => (
@@ -709,7 +709,7 @@ export default function TalentCardPage() {
                       ev.type === 'manager' ? 'bg-green-100 text-green-700' :
                       'bg-amber-100 text-amber-700'
                     }`}>
-                      {ev.type === 'self' ? 'Autoavaliacao' : ev.type === 'manager' ? 'Avaliacao do Gestor' : 'Stakeholder'}
+                      {ev.type === 'self' ? 'Autoavaliação' : ev.type === 'manager' ? 'Avaliação do Gestor' : 'Stakeholder'}
                     </span>
                     <span className="text-xs text-gray-400">{ev.cycle?.name || ''}</span>
                   </div>
@@ -744,7 +744,7 @@ export default function TalentCardPage() {
             </svg>
             <div>
               <h3 className="text-lg font-semibold text-gray-800">Feedback e PDI</h3>
-              <p className="text-sm text-gray-500">Os relatorios de Feedback e Plano de Desenvolvimento Individual (PDI) serao exibidos apos a finalizacao do ciclo de avaliacao pelo administrador.</p>
+              <p className="text-sm text-gray-500">Os relatórios de Feedback e Plano de Desenvolvimento Individual (PDI) serão exibidos após a finalização do ciclo de avaliação pelo administrador.</p>
             </div>
           </div>
         </div>

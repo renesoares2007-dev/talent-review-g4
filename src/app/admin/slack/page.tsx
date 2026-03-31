@@ -47,7 +47,7 @@ export default function SlackConfigPage() {
         const res = await fetch(config.webhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: '✅ Teste de conexao - Talent Review G4' }),
+          body: JSON.stringify({ text: '✅ Teste de conexão - Talent Review G4' }),
         })
         setTestResult(res.ok ? 'Webhook enviado com sucesso!' : `Erro: ${res.status}`)
       } else if (config.botToken && config.channel) {
@@ -57,7 +57,7 @@ export default function SlackConfigPage() {
             'Authorization': `Bearer ${config.botToken}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ channel: config.channel, text: '✅ Teste de conexao - Talent Review G4' }),
+          body: JSON.stringify({ channel: config.channel, text: '✅ Teste de conexão - Talent Review G4' }),
         })
         const data = await res.json()
         setTestResult(data.ok ? 'Mensagem enviada com sucesso!' : `Erro: ${data.error}`)
@@ -65,7 +65,7 @@ export default function SlackConfigPage() {
         setTestResult('Configure o Webhook URL ou Bot Token + Canal primeiro')
       }
     } catch {
-      setTestResult('Erro de conexao com o Slack')
+      setTestResult('Erro de conexão com o Slack')
     }
     setTesting(false)
   }
@@ -76,12 +76,12 @@ export default function SlackConfigPage() {
         <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
           <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
         </svg>
-        Integracao Slack
+        Integração Slack
       </h1>
 
       <div className="bg-white rounded-xl shadow p-6 mb-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-g4-dark">Configuracoes</h2>
+          <h2 className="text-lg font-semibold text-g4-dark">Configurações</h2>
           <label className="flex items-center gap-2 cursor-pointer">
             <span className="text-sm text-gray-600">{config.isActive ? 'Ativo' : 'Inativo'}</span>
             <div className="relative">
@@ -109,11 +109,11 @@ export default function SlackConfigPage() {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm"
               placeholder="https://hooks.slack.com/services/T.../B.../xxx"
             />
-            <p className="text-xs text-gray-400 mt-1">Crie em: Slack App &gt; Incoming Webhooks. Envia resumo de pendencias para o canal.</p>
+            <p className="text-xs text-gray-400 mt-1">Crie em: Slack App &gt; Incoming Webhooks. Envia resumo de pendências para o canal.</p>
           </div>
 
           <div className="border-t border-gray-100 pt-4">
-            <p className="text-xs font-medium text-gray-500 uppercase mb-3">Opcao avancada - DMs individuais</p>
+            <p className="text-xs font-medium text-gray-500 uppercase mb-3">Opção avançada - DMs individuais</p>
           </div>
 
           {/* Bot Token */}
@@ -133,7 +133,7 @@ export default function SlackConfigPage() {
 
           {/* Channel */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Canal padrao</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Canal padrão</label>
             <input
               type="text"
               value={config.channel}
@@ -167,7 +167,7 @@ export default function SlackConfigPage() {
             ) : (
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
             )}
-            Testar Conexao
+            Testar Conexão
           </button>
 
           {saved && <span className="text-green-600 text-sm font-medium">Salvo com sucesso!</span>}
@@ -185,7 +185,7 @@ export default function SlackConfigPage() {
         <h3 className="text-lg font-semibold text-g4-dark mb-4">Como configurar</h3>
         <div className="space-y-4 text-sm text-gray-600">
           <div>
-            <h4 className="font-medium text-gray-800 mb-1">Opcao 1: Webhook (simples)</h4>
+            <h4 className="font-medium text-gray-800 mb-1">Opção 1: Webhook (simples)</h4>
             <ol className="list-decimal ml-5 space-y-1">
               <li>Acesse <strong>api.slack.com/apps</strong> e crie um novo App</li>
               <li>Ative <strong>Incoming Webhooks</strong></li>
@@ -194,7 +194,7 @@ export default function SlackConfigPage() {
             </ol>
           </div>
           <div>
-            <h4 className="font-medium text-gray-800 mb-1">Opcao 2: Bot Token (DMs individuais)</h4>
+            <h4 className="font-medium text-gray-800 mb-1">Opção 2: Bot Token (DMs individuais)</h4>
             <ol className="list-decimal ml-5 space-y-1">
               <li>Crie um Slack App em <strong>api.slack.com/apps</strong></li>
               <li>Em <strong>OAuth &amp; Permissions</strong>, adicione os scopes: <code className="bg-gray-100 px-1 rounded">chat:write</code>, <code className="bg-gray-100 px-1 rounded">users:read.email</code>, <code className="bg-gray-100 px-1 rounded">users:read</code>, <code className="bg-gray-100 px-1 rounded">im:write</code></li>

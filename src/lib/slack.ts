@@ -111,20 +111,20 @@ export function buildPendingNotificationBlocks(
   pendingEvals: { type: string; subjectName: string }[]
 ): SlackBlock[] {
   const evalLines = pendingEvals.map(e => {
-    const typeLabel = e.type === 'self' ? 'Autoavaliacao' : e.type === 'manager' ? 'Avaliacao de Gestor' : 'Stakeholder'
+    const typeLabel = e.type === 'self' ? 'Autoavaliação' : e.type === 'manager' ? 'Avaliação de Gestor' : 'Stakeholder'
     return `• ${typeLabel} - ${e.subjectName}`
   }).join('\n')
 
   return [
     {
       type: 'header',
-      text: { type: 'plain_text', text: '📋 Avaliacoes Pendentes - Talent Review G4', emoji: true },
+      text: { type: 'plain_text', text: '📋 Avaliações Pendentes - Talent Review G4', emoji: true },
     },
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `Ola *${employeeName}*! Voce tem avaliacoes pendentes no ciclo *${cycleName}*:`,
+        text: `Olá *${employeeName}*! Você tem avaliações pendentes no ciclo *${cycleName}*:`,
       },
     },
     {
@@ -135,7 +135,7 @@ export function buildPendingNotificationBlocks(
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: 'Acesse a plataforma para completar suas avaliacoes.',
+        text: 'Acesse a plataforma para completar suas avaliações.',
       },
     },
     {
@@ -156,18 +156,18 @@ export function buildChannelSummaryBlocks(
   return [
     {
       type: 'header',
-      text: { type: 'plain_text', text: '📊 Resumo de Pendencias - Talent Review G4', emoji: true },
+      text: { type: 'plain_text', text: '📊 Resumo de Pendências - Talent Review G4', emoji: true },
     },
     {
       type: 'section',
       fields: [
         { type: 'mrkdwn', text: `*Ciclo:*\n${cycleName}` },
-        { type: 'mrkdwn', text: `*Total pendentes:*\n${total} avaliacao(oes)` },
+        { type: 'mrkdwn', text: `*Total pendentes:*\n${total} avaliação(ões)` },
       ],
     },
     {
       type: 'section',
-      text: { type: 'mrkdwn', text: `*Colaboradores com pendencias:*\n${lines}` },
+      text: { type: 'mrkdwn', text: `*Colaboradores com pendências:*\n${lines}` },
     },
     {
       type: 'context',

@@ -8,6 +8,11 @@ interface Cycle {
   startDate: string
   endDate: string
   isActive: boolean
+  selfEvalDeadline: string | null
+  stakeholderEvalDeadline: string | null
+  managerEvalDeadline: string | null
+  calibrationDeadline: string | null
+  feedbackDeadline: string | null
   evaluations: { id: string; status: string; type: string; subjectId: string }[]
 }
 
@@ -28,7 +33,7 @@ interface ImportResult {
 
 export default function CiclosPage() {
   const [cycles, setCycles] = useState<Cycle[]>([])
-  const [form, setForm] = useState({ name: '', description: '', startDate: '', endDate: '' })
+  const [form, setForm] = useState({ name: '', description: '', startDate: '', endDate: '', selfEvalDeadline: '', stakeholderEvalDeadline: '', managerEvalDeadline: '', calibrationDeadline: '', feedbackDeadline: '' })
   const [editing, setEditing] = useState<Cycle | null>(null)
   const [importCycleId, setImportCycleId] = useState<string | null>(null)
   const [importing, setImporting] = useState(false)
@@ -37,8 +42,14 @@ export default function CiclosPage() {
   const [notifying, setNotifying] = useState<string | null>(null)
   const [notifyResult, setNotifyResult] = useState<{ cycleId: string; message: string; success: boolean } | null>(null)
 
+  const [isBP, setIsBP] = useState(false)
+
   const loadCycles = () => fetch('/api/cycles').then(r => r.json()).then(setCycles)
-  useEffect(() => { loadCycles() }, [])
+  useEffect(() => {
+    loadCycles()
+    const stored = localStorage.getItem('user')
+    if (stored) { const u = JSON.parse(stored); setIsBP(u.isBP && !u.isAdmin) }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,7 +60,7 @@ export default function CiclosPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     })
-    setForm({ name: '', description: '', startDate: '', endDate: '' })
+    setForm({ name: '', description: '', startDate: '', endDate: '', selfEvalDeadline: '', stakeholderEvalDeadline: '', managerEvalDeadline: '', calibrationDeadline: '', feedbackDeadline: '' })
     setEditing(null)
     loadCycles()
   }
@@ -95,13 +106,13 @@ export default function CiclosPage() {
         if (s.evaluatorsNotified > 0) parts.push(`${s.evaluatorsNotified} DM(s) enviada(s)`)
         if (s.dmsFailed > 0) parts.push(`${s.dmsFailed} DM(s) falharam`)
         if (s.channelSent) parts.push('Resumo enviado ao canal')
-        if (s.totalPending === 0) parts.push('Nenhuma avaliacao pendente')
-        setNotifyResult({ cycleId, message: parts.join('. ') || 'Notificacoes enviadas', success: true })
+        if (s.totalPending === 0) parts.push('Nenhuma avaliação pendente')
+        setNotifyResult({ cycleId, message: parts.join('. ') || 'Notificações enviadas', success: true })
       } else {
-        setNotifyResult({ cycleId, message: data.message || 'Concluido', success: true })
+        setNotifyResult({ cycleId, message: data.message || 'Concluído', success: true })
       }
     } catch {
-      setNotifyResult({ cycleId, message: 'Erro de conexao', success: false })
+      setNotifyResult({ cycleId, message: 'Erro de conexão', success: false })
     }
     setNotifying(null)
   }
@@ -122,7 +133,7 @@ export default function CiclosPage() {
     <div>
       <h1 className="text-2xl font-bold text-g4-purple mb-6">Ciclos de Avaliação</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 mb-8">
+      {!isBP && <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 mb-8">
         <h2 className="text-lg font-semibold mb-4">{editing ? 'Editar Ciclo' : 'Novo Ciclo'}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
@@ -146,10 +157,40 @@ export default function CiclosPage() {
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800" />
           </div>
         </div>
+
+        <h3 className="text-sm font-semibold text-gray-700 mb-3">Prazos por Fase</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Autoavaliação</label>
+            <input type="date" value={form.selfEvalDeadline} onChange={e => setForm({ ...form, selfEvalDeadline: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Avaliação Stakeholder</label>
+            <input type="date" value={form.stakeholderEvalDeadline} onChange={e => setForm({ ...form, stakeholderEvalDeadline: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Avaliação Gestor</label>
+            <input type="date" value={form.managerEvalDeadline} onChange={e => setForm({ ...form, managerEvalDeadline: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Calibração</label>
+            <input type="date" value={form.calibrationDeadline} onChange={e => setForm({ ...form, calibrationDeadline: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Feedback</label>
+            <input type="date" value={form.feedbackDeadline} onChange={e => setForm({ ...form, feedbackDeadline: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm" />
+          </div>
+        </div>
+
         <button type="submit" className="bg-g4-purple text-white px-6 py-2 rounded-lg hover:bg-g4-purple-dark">
           {editing ? 'Atualizar' : 'Criar Ciclo'}
         </button>
-      </form>
+      </form>}
 
       <div className="grid gap-4">
         {cycles.map(c => {
@@ -167,9 +208,15 @@ export default function CiclosPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className={`text-xs px-2 py-1 rounded-full ${c.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {c.isActive ? 'Ativo' : 'Encerrado'}
-                  </span>
+                  <div className="flex items-center justify-end gap-2 mb-1">
+                    {!isBP && <button
+                      onClick={() => { setEditing(c); setForm({ name: c.name, description: c.description || '', startDate: c.startDate.slice(0, 10), endDate: c.endDate.slice(0, 10), selfEvalDeadline: c.selfEvalDeadline?.slice(0, 10) || '', stakeholderEvalDeadline: c.stakeholderEvalDeadline?.slice(0, 10) || '', managerEvalDeadline: c.managerEvalDeadline?.slice(0, 10) || '', calibrationDeadline: c.calibrationDeadline?.slice(0, 10) || '', feedbackDeadline: c.feedbackDeadline?.slice(0, 10) || '' }) }}
+                      className="text-xs text-g4-purple hover:text-g4-purple-dark"
+                    >Editar</button>}
+                    <span className={`text-xs px-2 py-1 rounded-full ${c.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                      {c.isActive ? 'Ativo' : 'Encerrado'}
+                    </span>
+                  </div>
                   <div className="mt-2 text-sm text-gray-600">{completed}/{total} avaliações concluídas</div>
                   {total > 0 && (
                     <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
@@ -179,8 +226,34 @@ export default function CiclosPage() {
                 </div>
               </div>
 
+              {/* Phase Deadlines Timeline */}
+              {(c.selfEvalDeadline || c.stakeholderEvalDeadline || c.managerEvalDeadline || c.calibrationDeadline || c.feedbackDeadline) && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Cronograma de Fases</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: 'Autoavaliação', date: c.selfEvalDeadline, color: 'bg-purple-100 text-purple-700' },
+                      { label: 'Stakeholder', date: c.stakeholderEvalDeadline, color: 'bg-amber-100 text-amber-700' },
+                      { label: 'Gestor', date: c.managerEvalDeadline, color: 'bg-green-100 text-green-700' },
+                      { label: 'Calibração', date: c.calibrationDeadline, color: 'bg-blue-100 text-blue-700' },
+                      { label: 'Feedback', date: c.feedbackDeadline, color: 'bg-pink-100 text-pink-700' },
+                    ].filter(p => p.date).map(p => {
+                      const deadline = new Date(p.date!)
+                      const isOverdue = deadline < new Date() && c.isActive
+                      return (
+                        <div key={p.label} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium ${isOverdue ? 'bg-red-100 text-red-700' : p.color}`}>
+                          <span>{p.label}</span>
+                          <span className="opacity-70">até {deadline.toLocaleDateString('pt-BR')}</span>
+                          {isOverdue && <span className="font-bold">!</span>}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Actions */}
-              <div className="mt-4 pt-4 border-t border-gray-100">
+              {!isBP && <div className="mt-4 pt-4 border-t border-gray-100">
                 {!isImporting ? (
                   <div className="flex flex-wrap items-center gap-4">
                     <button
@@ -190,7 +263,7 @@ export default function CiclosPage() {
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                       </svg>
-                      Importar Historico
+                      Importar Histórico
                     </button>
 
                     {c.isActive && (
@@ -319,7 +392,7 @@ export default function CiclosPage() {
                     )}
                   </div>
                 )}
-              </div>
+              </div>}
             </div>
           )
         })}

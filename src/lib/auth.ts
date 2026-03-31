@@ -43,6 +43,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.department = employee.department
           token.isAdmin = employee.isAdmin
           token.isManager = employee.isManager
+          token.isBP = employee.isBP
         }
       }
       return token
@@ -56,6 +57,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.department = token.department as string
         session.user.isAdmin = token.isAdmin as boolean
         session.user.isManager = token.isManager as boolean
+        session.user.isBP = token.isBP as boolean
       }
       return session
     },

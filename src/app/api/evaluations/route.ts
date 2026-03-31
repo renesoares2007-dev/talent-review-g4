@@ -125,7 +125,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json(evaluation)
   } catch (err) {
     console.error('PATCH evaluation error:', err)
-    return NextResponse.json({ error: 'Erro ao resetar avaliacao' }, { status: 500 })
+    return NextResponse.json({ error: 'Erro ao resetar avaliação' }, { status: 500 })
   }
 }
 
@@ -367,7 +367,7 @@ function generateFallbackFeedback(name: string, selfEval: any, managerEval: any,
     lines.push(`\n**Oportunidades de Melhoria (visao do gestor):**\n${managerEval.improvements}`)
   }
   if (selfEval?.strengths && selfEval.strengths !== managerEval?.strengths) {
-    lines.push(`\n**Pontos Fortes (autoavaliacao):**\n${selfEval.strengths}`)
+    lines.push(`\n**Pontos Fortes (autoavaliação):**\n${selfEval.strengths}`)
   }
 
   return lines.join('\n')
@@ -417,7 +417,7 @@ function generateFallbackPDI(name: string, strengths: string[], improvements: st
   lines.push(`**Acompanhamento:**`)
   lines.push(`- Reuniao de feedback com gestor: mensal`)
   lines.push(`- Revisao do PDI: a cada 90 dias`)
-  lines.push(`- Proxima avaliacao formal: proximo ciclo`)
+  lines.push(`- Próxima avaliação formal: próximo ciclo`)
 
   return lines.join('\n')
 }

@@ -10,6 +10,7 @@ interface Employee {
   managerId: string | null
   isAdmin: boolean
   isManager: boolean
+  isBP: boolean
   behavioralProfile: string | null
   manager?: { id: string; name: string }
 }
@@ -24,15 +25,21 @@ interface ImportResult {
 export default function ColaboradoresPage() {
   const [employees, setEmployees] = useState<Employee[]>([])
   const [editing, setEditing] = useState<Employee | null>(null)
-  const [form, setForm] = useState({ name: '', email: '', role: '', department: '', managerId: '', isAdmin: false, isManager: false })
+  const [form, setForm] = useState({ name: '', email: '', role: '', department: '', managerId: '', isAdmin: false, isManager: false, isBP: false })
   const [uploading, setUploading] = useState<string | null>(null)
   const [importResult, setImportResult] = useState<ImportResult | null>(null)
   const [importing, setImporting] = useState(false)
   const [activeTab, setActiveTab] = useState<'individual' | 'planilha'>('individual')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const [isBP, setIsBP] = useState(false)
+
   const loadEmployees = () => fetch('/api/employees').then(r => r.json()).then(setEmployees)
-  useEffect(() => { loadEmployees() }, [])
+  useEffect(() => {
+    loadEmployees()
+    const stored = localStorage.getItem('user')
+    if (stored) { const u = JSON.parse(stored); setIsBP(u.isBP && !u.isAdmin) }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,7 +50,7 @@ export default function ColaboradoresPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...body, managerId: body.managerId || null }),
     })
-    setForm({ name: '', email: '', role: '', department: '', managerId: '', isAdmin: false, isManager: false })
+    setForm({ name: '', email: '', role: '', department: '', managerId: '', isAdmin: false, isManager: false, isBP: false })
     setEditing(null)
     loadEmployees()
   }
@@ -100,7 +107,7 @@ export default function ColaboradoresPage() {
       <h1 className="text-2xl font-bold text-g4-purple mb-6">Gestão de Colaboradores</h1>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1 w-fit">
+      {!isBP && <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1 w-fit">
         <button
           onClick={() => setActiveTab('individual')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'individual' ? 'bg-white text-g4-purple shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}
@@ -123,10 +130,10 @@ export default function ColaboradoresPage() {
             Importar Planilha
           </span>
         </button>
-      </div>
+      </div>}
 
       {/* Individual Form */}
-      {activeTab === 'individual' && (
+      {!isBP && activeTab === 'individual' && (
       <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 mb-8">
         <h2 className="text-lg font-semibold mb-4">{editing ? 'Editar Colaborador' : 'Novo Colaborador'}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
@@ -169,6 +176,10 @@ export default function ColaboradoresPage() {
               <input type="checkbox" checked={form.isAdmin} onChange={e => setForm({ ...form, isAdmin: e.target.checked })} />
               <span className="text-sm text-gray-700">Admin</span>
             </label>
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={form.isBP} onChange={e => setForm({ ...form, isBP: e.target.checked })} />
+              <span className="text-sm text-gray-700">BP</span>
+            </label>
           </div>
         </div>
         <div className="flex gap-2">
@@ -176,7 +187,7 @@ export default function ColaboradoresPage() {
             {editing ? 'Atualizar' : 'Cadastrar'}
           </button>
           {editing && (
-            <button type="button" onClick={() => { setEditing(null); setForm({ name: '', email: '', role: '', department: '', managerId: '', isAdmin: false, isManager: false }) }}
+            <button type="button" onClick={() => { setEditing(null); setForm({ name: '', email: '', role: '', department: '', managerId: '', isAdmin: false, isManager: false, isBP: false }) }}
               className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-800">Cancelar</button>
           )}
         </div>
@@ -184,7 +195,7 @@ export default function ColaboradoresPage() {
       )}
 
       {/* Spreadsheet Import */}
-      {activeTab === 'planilha' && (
+      {!isBP && activeTab === 'planilha' && (
       <div className="bg-white rounded-xl shadow p-6 mb-8">
         <h2 className="text-lg font-semibold mb-4">Importar Colaboradores via Planilha</h2>
         <p className="text-sm text-gray-600 mb-4">
@@ -331,19 +342,19 @@ export default function ColaboradoresPage() {
               <th className="text-left px-4 py-3 font-medium text-gray-600">Cargo</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600">Depto</th>
               <th className="text-left px-4 py-3 font-medium text-gray-600">Gestor</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Perfil</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Ações</th>
+              {!isBP && <th className="text-left px-4 py-3 font-medium text-gray-600">Perfil</th>}
+              {!isBP && <th className="text-left px-4 py-3 font-medium text-gray-600">Ações</th>}
             </tr>
           </thead>
           <tbody>
             {employees.map(emp => (
               <tr key={emp.id} className="border-t border-gray-100">
-                <td className="px-4 py-3 text-gray-800">{emp.name} {emp.isManager && <span className="text-xs bg-blue-100 text-blue-700 px-1 rounded">Gestor</span>}</td>
+                <td className="px-4 py-3 text-gray-800">{emp.name} {emp.isManager && <span className="text-xs bg-blue-100 text-blue-700 px-1 rounded">Gestor</span>} {emp.isBP && <span className="text-xs bg-indigo-100 text-indigo-700 px-1 rounded">BP</span>}</td>
                 <td className="px-4 py-3 text-gray-600">{emp.email}</td>
                 <td className="px-4 py-3 text-gray-600">{emp.role}</td>
                 <td className="px-4 py-3 text-gray-600">{emp.department}</td>
                 <td className="px-4 py-3 text-gray-600">{emp.manager?.name || '-'}</td>
-                <td className="px-4 py-3">
+                {!isBP && <td className="px-4 py-3">
                   {emp.behavioralProfile ? (
                     <span className="text-green-600 text-xs">Enviado</span>
                   ) : (
@@ -352,12 +363,12 @@ export default function ColaboradoresPage() {
                       <input type="file" className="hidden" onChange={e => e.target.files?.[0] && handleUploadProfile(emp.id, e.target.files[0])} />
                     </label>
                   )}
-                </td>
-                <td className="px-4 py-3">
-                  <button onClick={() => { setEditing(emp); setForm({ name: emp.name, email: emp.email, role: emp.role, department: emp.department, managerId: emp.managerId || '', isAdmin: emp.isAdmin, isManager: emp.isManager }) }}
+                </td>}
+                {!isBP && <td className="px-4 py-3">
+                  <button onClick={() => { setEditing(emp); setForm({ name: emp.name, email: emp.email, role: emp.role, department: emp.department, managerId: emp.managerId || '', isAdmin: emp.isAdmin, isManager: emp.isManager, isBP: emp.isBP }) }}
                     className="text-g4-purple hover:text-g4-purple-dark mr-2">Editar</button>
                   <button onClick={() => handleDelete(emp.id)} className="text-red-600 hover:text-red-800">Excluir</button>
-                </td>
+                </td>}
               </tr>
             ))}
           </tbody>

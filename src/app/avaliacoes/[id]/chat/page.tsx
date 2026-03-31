@@ -44,15 +44,15 @@ declare global {
 }
 
 const PHASE_LABELS: Record<string, string> = {
-  intro: 'Introducao',
+  intro: 'Introdução',
   culture: 'Cultura e Valores',
-  culture_checkpoint: 'Cultura Concluida',
+  culture_checkpoint: 'Cultura Concluída',
   results: 'Resultados e Entregas',
   strengths: 'Pontos Fortes',
   improvements: 'Oportunidades de Melhoria',
   tags: 'Tags de Talento',
-  review: 'Revisao Final',
-  complete: 'Concluido',
+  review: 'Revisão Final',
+  complete: 'Concluído',
 }
 
 const PHASE_ORDER_MANAGER = ['intro', 'culture', 'culture_checkpoint', 'results', 'strengths', 'improvements', 'tags', 'review', 'complete']
@@ -140,7 +140,7 @@ export default function ChatEvaluationPage() {
 
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       if (event.error === 'not-allowed') {
-        alert('Permissao de microfone negada. Verifique as configuracoes do navegador.')
+        alert('Permissão de microfone negada. Verifique as configurações do navegador.')
         setSpeechSupported(false)
       }
       setIsRecording(false)
@@ -388,7 +388,7 @@ export default function ChatEvaluationPage() {
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-2xl font-bold text-g4-purple">
-            {evalType === 'self' ? 'Autoavaliacao' : evalType === 'manager' ? 'Avaliacao do Gestor' : 'Avaliacao Stakeholder'}
+            {evalType === 'self' ? 'Autoavaliação' : evalType === 'manager' ? 'Avaliação do Gestor' : 'Avaliação Stakeholder'}
           </h1>
           <p className="text-gray-500 text-sm">
             Avaliado: <strong>{subject?.name}</strong> - {subject?.role}
@@ -465,10 +465,10 @@ export default function ChatEvaluationPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-green-800">Progresso salvo com sucesso!</p>
-              <p className="text-xs text-green-600">Voce pode retomar a avaliacao a qualquer momento.</p>
+              <p className="text-xs text-green-600">Você pode retomar a avaliação a qualquer momento.</p>
             </div>
             <a href="/avaliacoes" className="bg-g4-purple text-white px-5 py-2 rounded-lg hover:bg-g4-purple-dark text-sm font-medium transition-colors">
-              Voltar para avaliacoes
+              Voltar para avaliações
             </a>
           </div>
         </div>
@@ -521,7 +521,7 @@ export default function ChatEvaluationPage() {
                       }`}>{p.deliveryPct}%</span>
                     </div>
                     {p.description && <p className="text-gray-500 text-xs mt-1">{p.description}</p>}
-                    {p.evidenceFile && <p className="text-blue-600 text-xs mt-1">Evidencia anexada</p>}
+                    {p.evidenceFile && <p className="text-blue-600 text-xs mt-1">Evidência anexada</p>}
                   </div>
                   <button onClick={() => removeProject(i)} className="text-gray-400 hover:text-red-500 ml-2">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
@@ -542,7 +542,7 @@ export default function ChatEvaluationPage() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800"
               />
               <textarea
-                placeholder="Descricao das entregas"
+                placeholder="Descrição das entregas"
                 value={projectForm.description}
                 onChange={e => setProjectForm({ ...projectForm, description: e.target.value })}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 resize-none"
@@ -561,7 +561,7 @@ export default function ChatEvaluationPage() {
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="text-xs text-gray-600 block mb-1">Evidencia</label>
+                  <label className="text-xs text-gray-600 block mb-1">Evidência</label>
                   <input
                     ref={projectFileRef}
                     type="file"
@@ -588,7 +588,7 @@ export default function ChatEvaluationPage() {
           )}
 
           {projects.length === 0 && !showProjectForm && (
-            <p className="text-xs text-blue-600">Nenhum projeto adicionado. Clique em &quot;+ Adicionar Projeto&quot; para comecar.</p>
+            <p className="text-xs text-blue-600">Nenhum projeto adicionado. Clique em &quot;+ Adicionar Projeto&quot; para começar.</p>
           )}
         </div>
       )}
@@ -598,11 +598,11 @@ export default function ChatEvaluationPage() {
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3">
           <div className="flex items-center gap-3">
             <div className="flex-1">
-              <p className="text-sm font-medium text-amber-800">Evidencias de Resultados</p>
+              <p className="text-sm font-medium text-amber-800">Evidências de Resultados</p>
               <p className="text-xs text-amber-600">
                 {evidenceFile
                   ? `Arquivo anexado: ${evidenceFile.split('/').pop()}`
-                  : 'Envie planilhas, graficos ou documentos que comprovem os resultados'}
+                  : 'Envie planilhas, gráficos ou documentos que comprovem os resultados'}
               </p>
             </div>
             <input
@@ -631,7 +631,7 @@ export default function ChatEvaluationPage() {
       {isRecording && (
         <div className="flex items-center gap-3 mb-2 px-3 py-2 bg-red-50 border border-red-200 rounded-xl">
           <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-          <span className="text-sm text-red-700 font-medium">Gravando audio...</span>
+          <span className="text-sm text-red-700 font-medium">Gravando áudio...</span>
           <span className="text-xs text-red-500">{Math.floor(recordingTime / 60)}:{(recordingTime % 60).toString().padStart(2, '0')}</span>
           <span className="text-xs text-red-400 ml-auto">Fale sua resposta e clique no microfone para parar</span>
         </div>
@@ -646,14 +646,14 @@ export default function ChatEvaluationPage() {
           onChange={e => setInputText(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleSend()}
           disabled={isLoading || isComplete}
-          placeholder={isComplete ? 'Avaliacao concluida!' : 'Digite ou grave um audio...'}
+          placeholder={isComplete ? 'Avaliação concluída!' : 'Digite ou grave um áudio...'}
           className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-g4-purple focus:border-transparent disabled:bg-gray-100"
         />
         {speechSupported && (
           <button
             onClick={toggleRecording}
             disabled={isLoading || isComplete}
-            title={isRecording ? 'Parar gravacao' : 'Gravar audio'}
+            title={isRecording ? 'Parar gravação' : 'Gravar áudio'}
             className={`px-4 py-3 rounded-xl transition-colors disabled:opacity-50 ${
               isRecording
                 ? 'bg-red-500 text-white hover:bg-red-600 animate-pulse'
@@ -696,12 +696,12 @@ export default function ChatEvaluationPage() {
               disabled={isLoading}
               className="text-sm bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium"
             >
-              Finalizar Avaliacao
+              Finalizar Avaliação
             </button>
           )}
           {isComplete && (
             <a href="/avaliacoes" className="text-sm bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-              Voltar para avaliacoes
+              Voltar para avaliações
             </a>
           )}
         </div>

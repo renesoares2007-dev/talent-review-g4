@@ -36,6 +36,7 @@ interface User {
   id: string
   isAdmin: boolean
   isManager: boolean
+  isBP: boolean
 }
 
 export default function ProjetosPage() {
@@ -49,6 +50,10 @@ export default function ProjetosPage() {
   const [user, setUser] = useState<User | null>(null)
   const [uploading, setUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState<string | null>(null)
+  const [editingProject, setEditingProject] = useState<string | null>(null)
+  const [editDeliveryPct, setEditDeliveryPct] = useState(0)
+  const [editingGoal, setEditingGoal] = useState<string | null>(null)
+  const [editGoalActual, setEditGoalActual] = useState(0)
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -83,6 +88,36 @@ export default function ProjetosPage() {
     setProjects(prev => prev.map(p => p.id === projectId ? { ...p, validated, validatedAt: validated ? new Date().toISOString() : null } : p))
   }
 
+  const handleRejectProject = async (projectId: string) => {
+    await fetch('/api/projects', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: projectId, validated: false }),
+    })
+    setProjects(prev => prev.map(p => p.id === projectId ? { ...p, validated: false, validatedAt: null } : p))
+  }
+
+  const handleUpdateDeliveryPct = async (projectId: string, newPct: number) => {
+    await fetch('/api/projects', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: projectId, deliveryPct: newPct, validated: false }),
+    })
+    setProjects(prev => prev.map(p => p.id === projectId ? { ...p, deliveryPct: newPct, validated: false, validatedAt: null } : p))
+    setEditingProject(null)
+  }
+
+  const handleUpdateGoal = async (goalId: string, newActual: number) => {
+    const res = await fetch('/api/goals', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: goalId, actual: newActual }),
+    })
+    const updated = await res.json()
+    setGoals(prev => prev.map(g => g.id === goalId ? { ...g, actual: updated.actual, percentage: updated.percentage } : g))
+    setEditingGoal(null)
+  }
+
   const handleGoalsUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !evaluation) return
@@ -104,7 +139,7 @@ export default function ProjetosPage() {
         setUploadResult(`Erro: ${data.error}`)
       }
     } catch {
-      setUploadResult('Erro de conexao')
+      setUploadResult('Erro de conexão')
     }
     setUploading(false)
     if (fileRef.current) fileRef.current.value = ''
@@ -207,21 +242,54 @@ export default function ProjetosPage() {
                     {p.evidenceFile && (
                       <a href={p.evidenceFile} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline mt-1 inline-flex items-center gap-1">
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
-                        Ver evidencia
+                        Ver evidência
                       </a>
                     )}
                   </div>
                   {canManage && (
-                    <button
-                      onClick={() => handleValidate(p.id, !p.validated)}
-                      className={`text-sm px-4 py-2 rounded-lg transition-colors ${
-                        p.validated
-                          ? 'bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600'
-                          : 'bg-green-600 text-white hover:bg-green-700'
-                      }`}
-                    >
-                      {p.validated ? 'Remover Validacao' : 'Validar'}
-                    </button>
+                    <div className="flex flex-col gap-2 items-end">
+                      {editingProject === p.id ? (
+                        <div className="flex items-center gap-2">
+                          <label className="text-xs text-gray-500">% Entrega:</label>
+                          <input type="number" min={0} max={200} value={editDeliveryPct}
+                            onChange={e => setEditDeliveryPct(Number(e.target.value))}
+                            className="w-20 border border-gray-300 rounded px-2 py-1 text-sm text-gray-800" />
+                          <button onClick={() => handleUpdateDeliveryPct(p.id, editDeliveryPct)}
+                            className="text-xs bg-g4-purple text-white px-3 py-1 rounded hover:bg-g4-purple-dark">Salvar</button>
+                          <button onClick={() => setEditingProject(null)}
+                            className="text-xs text-gray-500 hover:text-gray-700">Cancelar</button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleValidate(p.id, !p.validated)}
+                            className={`text-sm px-4 py-2 rounded-lg transition-colors ${
+                              p.validated
+                                ? 'bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600'
+                                : 'bg-green-600 text-white hover:bg-green-700'
+                            }`}
+                          >
+                            {p.validated ? 'Remover Validação' : 'Validar'}
+                          </button>
+                          {!p.validated && (
+                            <>
+                              <button
+                                onClick={() => { setEditingProject(p.id); setEditDeliveryPct(p.deliveryPct) }}
+                                className="text-sm px-3 py-2 rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+                              >
+                                Alterar %
+                              </button>
+                              <button
+                                onClick={() => handleRejectProject(p.id)}
+                                className="text-sm px-3 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                              >
+                                Reprovar
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -278,6 +346,7 @@ export default function ProjetosPage() {
                   <th className="pb-2 font-medium text-right">Alvo</th>
                   <th className="pb-2 font-medium text-right">Realizado</th>
                   <th className="pb-2 font-medium text-right">Atingimento</th>
+                  {canManage && <th className="pb-2 font-medium text-right">Ação</th>}
                 </tr>
               </thead>
               <tbody>
@@ -285,7 +354,15 @@ export default function ProjetosPage() {
                   <tr key={g.id} className="border-b last:border-0">
                     <td className="py-2 text-gray-800">{g.goalName}</td>
                     <td className="py-2 text-right text-gray-600">{g.target.toLocaleString('pt-BR')}</td>
-                    <td className="py-2 text-right text-gray-600">{g.actual.toLocaleString('pt-BR')}</td>
+                    <td className="py-2 text-right text-gray-600">
+                      {editingGoal === g.id ? (
+                        <input type="number" step="any" value={editGoalActual}
+                          onChange={e => setEditGoalActual(Number(e.target.value))}
+                          className="w-24 border border-gray-300 rounded px-2 py-1 text-sm text-right text-gray-800" />
+                      ) : (
+                        g.actual.toLocaleString('pt-BR')
+                      )}
+                    </td>
                     <td className="py-2 text-right">
                       <span className={`font-medium ${
                         g.percentage >= 100 ? 'text-green-600' :
@@ -294,12 +371,27 @@ export default function ProjetosPage() {
                         'text-red-600'
                       }`}>{g.percentage.toFixed(1)}%</span>
                     </td>
+                    {canManage && (
+                      <td className="py-2 text-right">
+                        {editingGoal === g.id ? (
+                          <div className="flex justify-end gap-1">
+                            <button onClick={() => handleUpdateGoal(g.id, editGoalActual)}
+                              className="text-xs bg-g4-purple text-white px-2 py-1 rounded hover:bg-g4-purple-dark">Salvar</button>
+                            <button onClick={() => setEditingGoal(null)}
+                              className="text-xs text-gray-500 hover:text-gray-700">X</button>
+                          </div>
+                        ) : (
+                          <button onClick={() => { setEditingGoal(g.id); setEditGoalActual(g.actual) }}
+                            className="text-xs text-amber-600 hover:text-amber-800">Alterar</button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr className="border-t-2">
-                  <td className="pt-2 font-semibold text-gray-800">Media</td>
+                  <td className="pt-2 font-semibold text-gray-800">Média</td>
                   <td></td>
                   <td></td>
                   <td className="pt-2 text-right">

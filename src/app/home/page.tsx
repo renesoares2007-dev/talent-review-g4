@@ -8,6 +8,7 @@ interface User {
   department: string
   isAdmin: boolean
   isManager: boolean
+  isBP: boolean
 }
 
 export default function HomePage() {
@@ -21,7 +22,7 @@ export default function HomePage() {
       const u = JSON.parse(stored)
       setUser(u)
 
-      if (u.isAdmin) {
+      if (u.isAdmin || u.isBP) {
         Promise.all([
           fetch('/api/employees').then(r => r.json()),
           fetch('/api/cycles').then(r => r.json()),
@@ -57,38 +58,38 @@ export default function HomePage() {
   }
 
   const adminCards = [
-    { href: '/admin/valores', title: 'Gestao de Valores', desc: 'Cadastre valores e comportamentos da empresa', icon: 'valores', color: 'text-g4-gold' },
+    { href: '/admin/valores', title: 'Gestão de Valores', desc: 'Cadastre valores e comportamentos da empresa', icon: 'valores', color: 'text-g4-gold' },
     { href: '/admin/colaboradores', title: 'Colaboradores', desc: 'Gerencie colaboradores e estrutura organizacional', icon: 'colaboradores', color: 'text-g4-purple' },
-    { href: '/admin/ciclos', title: 'Ciclos de Avaliacao', desc: 'Crie e gerencie ciclos de avaliacao', icon: 'ciclos', color: 'text-g4-green' },
-    { href: '/avaliacoes', title: 'Avaliacoes', desc: 'Realize autoavaliacoes e avaliacoes de equipe', icon: 'avaliacoes', color: 'text-g4-purple' },
-    { href: '/dashboard', title: 'Dashboard do Gestor', desc: 'Visao consolidada da equipe', icon: 'dashboard', color: 'text-g4-burgundy' },
+    { href: '/admin/ciclos', title: 'Ciclos de Avaliação', desc: 'Crie e gerencie ciclos de avaliação', icon: 'ciclos', color: 'text-g4-green' },
+    { href: '/avaliacoes', title: 'Avaliações', desc: 'Realize autoavaliações e avaliações de equipe', icon: 'avaliacoes', color: 'text-g4-purple' },
+    { href: '/dashboard', title: 'Dashboard do Gestor', desc: 'Visão consolidada da equipe', icon: 'dashboard', color: 'text-g4-burgundy' },
     { href: '/ninebox', title: 'Matriz Ninebox', desc: 'Posicionamento de colaboradores na matriz', icon: 'ninebox', color: 'text-g4-magenta' },
   ]
 
   const managerCards = [
-    { href: '/avaliacoes', title: 'Avaliacoes', desc: pendingCount > 0 ? `Voce tem ${pendingCount} avaliacao(oes) pendente(s)` : 'Realize avaliacoes da sua equipe', icon: 'avaliacoes', color: 'text-g4-purple' },
-    { href: '/dashboard', title: 'Dashboard do Gestor', desc: 'Visao consolidada da sua equipe', icon: 'dashboard', color: 'text-g4-burgundy' },
+    { href: '/avaliacoes', title: 'Avaliações', desc: pendingCount > 0 ? `Você tem ${pendingCount} avaliação(ões) pendente(s)` : 'Realize avaliações da sua equipe', icon: 'avaliacoes', color: 'text-g4-purple' },
+    { href: '/dashboard', title: 'Dashboard do Gestor', desc: 'Visão consolidada da sua equipe', icon: 'dashboard', color: 'text-g4-burgundy' },
     { href: '/ninebox', title: 'Matriz Ninebox', desc: 'Posicionamento da equipe na matriz', icon: 'ninebox', color: 'text-g4-green' },
     { href: '/talent-card', title: 'Talent Card', desc: 'Veja seus resultados e plano de desenvolvimento', icon: 'talentcard', color: 'text-g4-gold' },
   ]
 
   const userCards = [
-    { href: '/avaliacoes', title: 'Avaliacoes', desc: pendingCount > 0 ? `Voce tem ${pendingCount} avaliacao(oes) pendente(s)` : 'Realize suas avaliacoes', icon: 'avaliacoes', color: 'text-g4-purple' },
+    { href: '/avaliacoes', title: 'Avaliações', desc: pendingCount > 0 ? `Você tem ${pendingCount} avaliação(ões) pendente(s)` : 'Realize suas avaliações', icon: 'avaliacoes', color: 'text-g4-purple' },
     { href: '/talent-card', title: 'Talent Card', desc: 'Veja seus resultados e plano de desenvolvimento', icon: 'talentcard', color: 'text-g4-gold' },
   ]
 
-  const cards = user?.isAdmin ? adminCards : user?.isManager ? managerCards : userCards
+  const cards = (user?.isAdmin || user?.isBP) ? adminCards : user?.isManager ? managerCards : userCards
 
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-g4-purple">
-          {user ? `Ola, ${user.name.split(' ')[0]}!` : 'Talent Review G4'}
+          {user ? `Olá, ${user.name.split(' ')[0]}!` : 'Talent Review G4'}
         </h1>
         <p className="text-g4-burgundy mt-1">{user?.role || ''}</p>
       </div>
 
-      {user?.isAdmin && (
+      {(user?.isAdmin || user?.isBP) && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow p-6">
             <div className="text-4xl font-bold text-g4-purple">{stats.employees}</div>
@@ -96,26 +97,26 @@ export default function HomePage() {
           </div>
           <div className="bg-white rounded-xl shadow p-6">
             <div className="text-4xl font-bold text-g4-green">{stats.cycles}</div>
-            <div className="text-gray-500 mt-1">Ciclos de Avaliacao</div>
+            <div className="text-gray-500 mt-1">Ciclos de Avaliação</div>
           </div>
           <div className="bg-white rounded-xl shadow p-6">
             <div className="text-4xl font-bold text-g4-magenta">{stats.evaluations}</div>
-            <div className="text-gray-500 mt-1">Avaliacoes</div>
+            <div className="text-gray-500 mt-1">Avaliações</div>
           </div>
         </div>
       )}
 
-      {!user?.isAdmin && pendingCount > 0 && (
+      {!user?.isAdmin && !user?.isBP && pendingCount > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 flex items-center gap-3">
           <div className="text-2xl font-bold text-amber-600">{pendingCount}</div>
           <div>
-            <p className="font-medium text-amber-800">Avaliacao(oes) pendente(s)</p>
-            <p className="text-sm text-amber-600">Complete suas avaliacoes para o ciclo ativo</p>
+            <p className="font-medium text-amber-800">Avaliação(ões) pendente(s)</p>
+            <p className="text-sm text-amber-600">Complete suas avaliações para o ciclo ativo</p>
           </div>
         </div>
       )}
 
-      <div className={`grid grid-cols-1 ${user?.isAdmin ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
+      <div className={`grid grid-cols-1 ${(user?.isAdmin || user?.isBP) ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
         {cards.map(item => (
           <a key={item.href} href={item.href}
             className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition-shadow border border-gray-100 flex items-start gap-4">

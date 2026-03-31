@@ -141,8 +141,8 @@ export default function NineboxPage() {
                 <th className="text-left px-4 py-3 font-medium text-gray-600">Colaborador</th>
                 <th className="text-center px-4 py-3 font-medium text-gray-600">Cultura</th>
                 <th className="text-center px-4 py-3 font-medium text-gray-600">Resultados</th>
-                <th className="text-center px-4 py-3 font-medium text-gray-600">Classificacao</th>
-                <th className="text-center px-4 py-3 font-medium text-gray-600">Acoes</th>
+                <th className="text-center px-4 py-3 font-medium text-gray-600">Classificação</th>
+                <th className="text-center px-4 py-3 font-medium text-gray-600">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -161,7 +161,7 @@ export default function NineboxPage() {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <a href={`/relatorio?cycleId=${selectedCycle}&subjectId=${r.subjectId}`}
-                        className="text-g4-purple hover:text-g4-purple-dark text-xs">Ver Relatorio</a>
+                        className="text-g4-purple hover:text-g4-purple-dark text-xs">Ver Relatório</a>
                     </td>
                   </tr>
                 )
@@ -172,7 +172,7 @@ export default function NineboxPage() {
       )}
 
       {selectedCycle && visibleResults.length === 0 && (
-        <p className="text-gray-400 text-center py-8 mt-4">Nenhum resultado consolidado para este ciclo. Consolide as avaliacoes no Dashboard primeiro.</p>
+        <p className="text-gray-400 text-center py-8 mt-4">Nenhum resultado consolidado para este ciclo. Consolide as avaliações no Dashboard primeiro.</p>
       )}
     </div>
   )

@@ -99,3 +99,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Erro ao processar planilha' }, { status: 500 })
   }
 }
+
+export async function PUT(request: NextRequest) {
+  const body = await request.json()
+  const { id, actual, target } = body
+
+  if (!id) return NextResponse.json({ error: 'id obrigatório' }, { status: 400 })
+
+  const data: { actual?: number; target?: number; percentage?: number } = {}
+  const existing = await prisma.goalsPanelItem.findUnique({ where: { id } })
+  if (!existing) return NextResponse.json({ error: 'Meta não encontrada' }, { status: 404 })
+
+  const newTarget = target !== undefined ? parseFloat(target) : existing.target
+  const newActual = actual !== undefined ? parseFloat(actual) : existing.actual
+
+  data.target = newTarget
+  data.actual = newActual
+  data.percentage = newTarget > 0 ? (newActual / newTarget) * 100 : 0
+
+  const goal = await prisma.goalsPanelItem.update({ where: { id }, data })
+  return NextResponse.json(goal)
+}

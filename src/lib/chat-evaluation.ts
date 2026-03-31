@@ -219,25 +219,25 @@ export function buildSystemPrompt(
   accumulatedData: AccumulatedData
 ): string {
   const isSelf = evaluationType === 'self'
-  const pronoun = isSelf ? 'voce' : subjectName
+  const pronoun = isSelf ? 'você' : subjectName
   const possessive = isSelf ? 'suas' : `de ${subjectName}`
 
-  const baseInstructions = `Voce e um consultor de RH conduzindo uma avaliacao de desempenho${isSelf ? ' (autoavaliacao)' : ''} para ${subjectName}.
-Responda sempre em portugues brasileiro, de forma acolhedora e profissional.
-Seja conversacional - como um dialogo natural, nao um interrogatorio.
-Faca uma pergunta por vez. Mantenha respostas curtas (2-4 frases).
+  const baseInstructions = `Você é um consultor de RH conduzindo uma avaliação de desempenho${isSelf ? ' (autoavaliação)' : ''} para ${subjectName}.
+Responda sempre em português brasileiro, de forma acolhedora e profissional.
+Seja conversacional - como um diálogo natural, não um interrogatório.
+Faça uma pergunta por vez. Mantenha respostas curtas (2-4 frases).
 
-IMPORTANTE: Ao final de cada resposta, inclua um bloco <DATA> com dados estruturados extraidos.
-O bloco <DATA> NUNCA deve aparecer na mensagem visivel ao usuario.`
+IMPORTANTE: Ao final de cada resposta, inclua um bloco <DATA> com dados estruturados extraídos.
+O bloco <DATA> NUNCA deve aparecer na mensagem visível ao usuário.`
 
   switch (phaseState.phase) {
     case 'intro':
       return `${baseInstructions}
 
-Voce esta na fase de INTRODUCAO.
-Cumprimente o avaliador, confirme que a avaliacao e sobre ${subjectName} (${evaluationType === 'self' ? 'autoavaliacao' : evaluationType === 'manager' ? 'avaliacao como gestor' : 'avaliacao como stakeholder'}).
-Explique brevemente que vao conversar sobre valores/cultura e resultados.
-Pergunte se esta pronto para comecar.
+Você está na fase de INTRODUÇÃO.
+Cumprimente o avaliador, confirme que a avaliação é sobre ${subjectName} (${evaluationType === 'self' ? 'autoavaliação' : evaluationType === 'manager' ? 'avaliação como gestor' : 'avaliação como stakeholder'}).
+Explique brevemente que vão conversar sobre valores/cultura e resultados.
+Pergunte se está pronto para começar.
 
 Inclua ao final:
 <DATA>{"action": "ready"}</DATA>`
@@ -248,7 +248,7 @@ Inclua ao final:
       const valueBehaviors = currentValue ? behaviors.filter(b => b.valueName === currentValue) : []
 
       if (!currentValue || phaseState.currentValueIndex >= uniqueValues.length) {
-        return `${baseInstructions}\nFase de cultura concluida. Inclua: <DATA>{"action": "phase_complete"}</DATA>`
+        return `${baseInstructions}\nFase de cultura concluída. Inclua: <DATA>{"action": "phase_complete"}</DATA>`
       }
 
       const alreadyEvaluated = accumulatedData.behaviors.map(b => b.behaviorId)
@@ -257,7 +257,7 @@ Inclua ao final:
 
       return `${baseInstructions}
 
-Voce esta na fase de CULTURA - avaliando valores e comportamentos.
+Você está na fase de CULTURA - avaliando valores e comportamentos.
 Valor atual: "${currentValue}" (${valueBehaviors[0]?.valueDescription || ''})
 Valores restantes: ${remainingValues}
 
@@ -276,7 +276,7 @@ Peca que classifique de 0 a 4:
 
 Inclua ao final:
 <DATA>{"moveToNext": false}</DATA>`
-  : `ETAPA 2: O avaliador ja deu a nota. Agora peca exemplos concretos de situacoes onde ${pronoun} demonstrou (ou nao) os comportamentos deste valor.
+  : `ETAPA 2: O avaliador ja deu a nota. Agora peca exemplos concretos de situações onde ${pronoun} demonstrou (ou não) os comportamentos deste valor.
 Liste os comportamentos como referencia para o avaliador:
 ${behaviorsListText}
 
@@ -289,9 +289,9 @@ Com base na resposta, inclua os dados de TODOS os comportamentos deste valor:
       return `${baseInstructions}
 
 FASE DE CHECKPOINT POS-CULTURA.
-Parabenize o avaliador por completar a avaliacao de cultura e valores.
+Parabenize o avaliador por completar a avaliação de cultura e valores.
 Apresente um resumo rapido: ${accumulatedData.behaviors.length} comportamentos avaliados.
-Pergunte se deseja continuar para a avaliacao de resultados e entregas agora, ou se prefere salvar o progresso e continuar depois.
+Pergunte se deseja continuar para a avaliação de resultados e entregas agora, ou se prefere salvar o progresso e continuar depois.
 
 Inclua ao final:
 <DATA>{"action": "checkpoint"}</DATA>`
@@ -299,7 +299,7 @@ Inclua ao final:
     case 'results':
       return `${baseInstructions}
 
-Voce esta na fase de RESULTADOS - avaliando entregas e metas.
+Você está na fase de RESULTADOS - avaliando entregas e metas.
 Pergunte sobre as entregas ${possessive} no periodo: metas atingidas, projetos concluidos, resultados quantitativos.
 Peca comparativos de meta vs real quando possivel.
 
@@ -317,7 +317,7 @@ Se precisar de mais informacoes, inclua:
     case 'strengths':
       return `${baseInstructions}
 
-Voce esta na fase de PONTOS FORTES.
+Você está na fase de PONTOS FORTES.
 Pergunte: Quais sao os principais pontos fortes e forcas ${possessive}? O que ${pronoun} faz de melhor?
 
 Inclua ao final:
@@ -326,8 +326,8 @@ Inclua ao final:
     case 'improvements':
       return `${baseInstructions}
 
-Voce esta na fase de OPORTUNIDADES DE MELHORIA.
-Pergunte: Quais areas ${pronoun} poderia desenvolver? Que oportunidades de melhoria voce identifica?
+Você está na fase de OPORTUNIDADES DE MELHORIA.
+Pergunte: Quais áreas ${pronoun} poderia desenvolver? Que oportunidades de melhoria você identifica?
 
 Inclua ao final:
 <DATA>{"value": "resumo das oportunidades"}</DATA>`
@@ -351,7 +351,7 @@ Inclua ao final:
       return `${baseInstructions}
 
 FASE DE REVISAO.
-Apresente um resumo da avaliacao ao usuario:
+Apresente um resumo da avaliação ao usuário:
 
 Cultura (comportamentos avaliados):
 ${accumulatedData.behaviors.map(b => {
@@ -385,16 +385,16 @@ export function generateFallbackResponse(
   userMessage: string
 ): ChatResponse {
   const isSelf = evaluationType === 'self'
-  const pronoun = isSelf ? 'voce' : subjectName
+  const pronoun = isSelf ? 'você' : subjectName
 
   switch (phaseState.phase) {
     case 'intro':
       return {
-        reply: `Ola! Vamos iniciar a avaliacao ${isSelf ? 'de autoavaliacao' : `de ${subjectName}`}. Vou te guiar com algumas perguntas sobre cultura e resultados. Vamos comecar?`,
+        reply: `Olá! Vamos iniciar a avaliação ${isSelf ? 'de autoavaliação' : `de ${subjectName}`}. Vou te guiar com algumas perguntas sobre cultura e resultados. Vamos começar?`,
         phaseState: { ...phaseState, phase: 'culture' },
         accumulatedData,
         isComplete: false,
-        quickActions: ['Sim, vamos comecar!'],
+        quickActions: ['Sim, vamos começar!'],
       }
 
     case 'culture': {
@@ -435,7 +435,7 @@ export function generateFallbackResponse(
           if (isEditing) {
             // In edit mode → skip checkpoint, go to results editing
             return {
-              reply: `Revisao de cultura concluida! Agora vamos revisar os **Resultados e Entregas**.\n\nDescreva as entregas e metas${accumulatedData.results?.evidenceText ? `\n\n**Resposta anterior:** ${accumulatedData.results.evidenceText}` : ''}`,
+              reply: `Revisão de cultura concluída! Agora vamos revisar os **Resultados e Entregas**.\n\nDescreva as entregas e metas${accumulatedData.results?.evidenceText ? `\n\n**Resposta anterior:** ${accumulatedData.results.evidenceText}` : ''}`,
               phaseState: { phase: 'results', currentValueIndex: 0, currentBehaviorIndex: 0, waitingForFollowUp: false, isEditing: true },
               accumulatedData: { ...accumulatedData, behaviors: newBehaviors },
               isComplete: false,
@@ -443,7 +443,7 @@ export function generateFallbackResponse(
             }
           }
           return {
-            reply: `Excelente! Terminamos a avaliacao de **Cultura e Valores**. Foram avaliados ${newBehaviors.length} comportamentos.\n\nDeseja continuar para a avaliacao de **Resultados e Entregas** agora, ou prefere salvar o progresso e continuar depois?`,
+            reply: `Excelente! Terminamos a avaliação de **Cultura e Valores**. Foram avaliados ${newBehaviors.length} comportamentos.\n\nDeseja continuar para a avaliação de **Resultados e Entregas** agora, ou prefere salvar o progresso e continuar depois?`,
             phaseState: { phase: 'culture_checkpoint', currentValueIndex: 0, currentBehaviorIndex: 0, waitingForFollowUp: false },
             accumulatedData: { ...accumulatedData, behaviors: newBehaviors },
             isComplete: false,
@@ -454,11 +454,11 @@ export function generateFallbackResponse(
         const nextValueDesc = behaviors.find(b => b.valueName === nextValue)?.valueDescription || ''
         const existingFreqNext = getExistingFrequency(nextValue)
         const currentLabel = existingFreqNext !== null && isEditing
-          ? `\n\n**Nota atual: ${existingFreqNext}/4** - Voce pode manter ou alterar.`
+          ? `\n\n**Nota atual: ${existingFreqNext}/4** - Você pode manter ou alterar.`
           : ''
 
         return {
-          reply: `Registrado! Agora vamos ${isEditing ? 'revisar' : 'avaliar'} o valor **${nextValue}**${nextValueDesc ? ` - ${nextValueDesc}` : ''}.${currentLabel}\n\nComo ${pronoun === 'voce' ? 'voce avalia a si mesmo(a)' : `voce avalia ${pronoun}`} neste valor?`,
+          reply: `Registrado! Agora vamos ${isEditing ? 'revisar' : 'avaliar'} o valor **${nextValue}**${nextValueDesc ? ` - ${nextValueDesc}` : ''}.${currentLabel}\n\nComo ${pronoun === 'você' ? 'você avalia a si mesmo(a)' : `você avalia ${pronoun}`} neste valor?`,
           phaseState: { phase: 'culture', currentValueIndex: nextVI, currentBehaviorIndex: 0, waitingForFollowUp: false, isEditing },
           accumulatedData: { ...accumulatedData, behaviors: newBehaviors },
           isComplete: false,
@@ -472,7 +472,7 @@ export function generateFallbackResponse(
 
       const valueDescription = valueBehaviors[0]?.valueDescription || ''
       const behaviorsListText = valueBehaviors.map((b, i) => `${i + 1}. ${b.description}`).join('\n')
-      const askFrequency = pronoun === 'voce' ? 'voce avalia a si mesmo(a)' : `voce avalia ${pronoun}`
+      const askFrequency = pronoun === 'você' ? 'você avalia a si mesmo(a)' : `você avalia ${pronoun}`
       const existingFreq = getExistingFrequency(currentValue)
 
       if (phaseState.waitingForFollowUp) {
@@ -509,7 +509,7 @@ export function generateFallbackResponse(
           : null
 
         return {
-          reply: `Considerando os comportamentos esperados para **${currentValue}**:\n\n${behaviorsListText}\n\n${existingExample && isEditing ? `**Exemplo anterior:** ${existingExample}\n\n` : ''}Cite exemplos de situacoes onde ${pronoun === 'voce' ? 'voce demonstrou' : `${pronoun} demonstrou`} (ou nao) esses comportamentos.`,
+          reply: `Considerando os comportamentos esperados para **${currentValue}**:\n\n${behaviorsListText}\n\n${existingExample && isEditing ? `**Exemplo anterior:** ${existingExample}\n\n` : ''}Cite exemplos de situações onde ${pronoun === 'você' ? 'você demonstrou' : `${pronoun} demonstrou`} (ou não) esses comportamentos.`,
           phaseState,
           accumulatedData,
           isComplete: false,
@@ -560,7 +560,7 @@ export function generateFallbackResponse(
             : null
 
           return {
-            reply: `Entendido! Agora, considerando os comportamentos esperados para **${currentValue}**:\n\n${behaviorsListText}\n\n${existingExample && isEditing ? `**Exemplo anterior:** ${existingExample}\n\n` : ''}Cite exemplos de situacoes onde ${pronoun === 'voce' ? 'voce demonstrou' : `${pronoun} demonstrou`} (ou nao) esses comportamentos.`,
+            reply: `Entendido! Agora, considerando os comportamentos esperados para **${currentValue}**:\n\n${behaviorsListText}\n\n${existingExample && isEditing ? `**Exemplo anterior:** ${existingExample}\n\n` : ''}Cite exemplos de situações onde ${pronoun === 'você' ? 'você demonstrou' : `${pronoun} demonstrou`} (ou não) esses comportamentos.`,
             phaseState: { ...phaseState, waitingForFollowUp: true, currentBehaviorIndex: frequency },
             accumulatedData,
             isComplete: false,
@@ -571,7 +571,7 @@ export function generateFallbackResponse(
 
       // No valid frequency yet → present value and ask frequency
       const currentLabel = existingFreq !== null && isEditing
-        ? `\n\n**Nota atual: ${existingFreq}/4** - Voce pode manter ou alterar.`
+        ? `\n\n**Nota atual: ${existingFreq}/4** - Você pode manter ou alterar.`
         : ''
 
       return {
@@ -588,7 +588,7 @@ export function generateFallbackResponse(
         const msgLower = userMessage.toLowerCase()
         if (msgLower.includes('sim') || msgLower.includes('continuar')) {
           return {
-            reply: `Otimo! Vamos para a avaliacao de **Resultados e Entregas**.\n\nConte-me sobre as principais entregas e metas de ${pronoun} neste periodo. Quais projetos foram concluidos? As metas foram atingidas?`,
+            reply: `Otimo! Vamos para a avaliação de **Resultados e Entregas**.\n\nConte-me sobre as principais entregas e metas de ${pronoun} neste período. Quais projetos foram concluídos? As metas foram atingidas?`,
             phaseState: { ...phaseState, phase: 'results' },
             accumulatedData,
             isComplete: false,
@@ -596,7 +596,7 @@ export function generateFallbackResponse(
         }
         // User chose to save and come back later
         return {
-          reply: 'Progresso salvo com sucesso! Voce pode voltar a qualquer momento para continuar a avaliacao de onde parou.',
+          reply: 'Progresso salvo com sucesso! Você pode voltar a qualquer momento para continuar a avaliação de onde parou.',
           phaseState: { ...phaseState, phase: 'culture_checkpoint' },
           accumulatedData,
           isComplete: false,
@@ -604,7 +604,7 @@ export function generateFallbackResponse(
         }
       }
       return {
-        reply: `Deseja continuar para a avaliacao de **Resultados e Entregas** agora?`,
+        reply: `Deseja continuar para a avaliação de **Resultados e Entregas** agora?`,
         phaseState,
         accumulatedData,
         isComplete: false,
@@ -633,7 +633,7 @@ export function generateFallbackResponse(
           }
           // User typed a project description as text
           return {
-            reply: 'Use o painel **"Meus Projetos"** abaixo para adicionar seus projetos com nome, descricao, percentual de entrega e evidencias. Quando terminar, clique em **"Projetos adicionados"**.',
+            reply: 'Use o painel **"Meus Projetos"** abaixo para adicionar seus projetos com nome, descrição, percentual de entrega e evidências. Quando terminar, clique em **"Projetos adicionados"**.',
             phaseState,
             accumulatedData: { ...accumulatedData, results: { ...accumulatedData.results || { classification: 'entrega', score: 2.5 }, evidenceText: userMessage } },
             isComplete: false,
@@ -642,7 +642,7 @@ export function generateFallbackResponse(
         }
 
         return {
-          reply: `Agora vamos para a avaliacao de **Resultados e Entregas**.\n\n**Quais os projetos relevantes que gostaria de destacar?**\n\nUse o painel **"Meus Projetos"** abaixo para adicionar cada projeto com:\n- Nome do projeto\n- Descricao das entregas\n- Percentual de entrega (%)\n- Upload de evidencias (opcional)\n\nQuando terminar de adicionar seus projetos, clique em **"Projetos adicionados"**.`,
+          reply: `Agora vamos para a avaliação de **Resultados e Entregas**.\n\n**Quais os projetos relevantes que gostaria de destacar?**\n\nUse o painel **"Meus Projetos"** abaixo para adicionar cada projeto com:\n- Nome do projeto\n- Descricao das entregas\n- Percentual de entrega (%)\n- Upload de evidencias (opcional)\n\nQuando terminar de adicionar seus projetos, clique em **"Projetos adicionados"**.`,
           phaseState,
           accumulatedData: accumulatedData.results ? accumulatedData : { ...accumulatedData, results: { evidenceText: '', classification: 'entrega', score: 2.5 } },
           isComplete: false,
@@ -659,7 +659,7 @@ export function generateFallbackResponse(
           const actions = classLabels.map(l => l === currentClassLabel ? `${l} (atual)` : l)
 
           return {
-            reply: `Como voce classificaria as entregas no geral?\n\n**Classificacao atual:** ${currentClassLabel}`,
+            reply: `Como você classificaria as entregas no geral?\n\n**Classificação atual:** ${currentClassLabel}`,
             phaseState,
             accumulatedData,
             isComplete: false,
@@ -668,7 +668,7 @@ export function generateFallbackResponse(
         }
 
         return {
-          reply: 'Como voce classificaria as entregas no geral?\n\nConsidere os projetos cadastrados pelo colaborador e o painel de metas (se disponivel).',
+          reply: 'Como você classificaria as entregas no geral?\n\nConsidere os projetos cadastrados pelo colaborador e o painel de metas (se disponível).',
           phaseState,
           accumulatedData: { ...accumulatedData, results: { evidenceText: userMessage, classification: 'entrega', score: 2.5 } },
           isComplete: false,
@@ -678,7 +678,7 @@ export function generateFallbackResponse(
 
       const existingResults = accumulatedData.results?.evidenceText
       return {
-        reply: `${isEditingResults ? 'Revisando' : 'Conte-me sobre'} as principais entregas e metas de ${pronoun} neste periodo.${existingResults && isEditingResults ? `\n\n**Resposta anterior:** ${existingResults}` : ' Quais projetos foram concluidos? As metas foram atingidas?'}\n\nVoce pode consultar os **projetos cadastrados** e o **painel de metas** no painel lateral para embasar sua avaliacao.`,
+        reply: `${isEditingResults ? 'Revisando' : 'Conte-me sobre'} as principais entregas e metas de ${pronoun} neste periodo.${existingResults && isEditingResults ? `\n\n**Resposta anterior:** ${existingResults}` : ' Quais projetos foram concluidos? As metas foram atingidas?'}\n\nVocê pode consultar os **projetos cadastrados** e o **painel de metas** no painel lateral para embasar sua avaliação.`,
         phaseState,
         accumulatedData,
         isComplete: false,
@@ -693,7 +693,7 @@ export function generateFallbackResponse(
         // "Manter" in edit mode
         if (isEditingStr && userMessage.toLowerCase().includes('manter') && accumulatedData.strengths) {
           return {
-            reply: `Mantido! Agora vamos ${isEditingStr ? 'revisar' : 'falar sobre'} as **Oportunidades de Melhoria**.${accumulatedData.improvements && isEditingStr ? `\n\n**Resposta anterior:** ${accumulatedData.improvements}` : `\n\nQuais areas ${pronoun} poderia desenvolver?`}`,
+            reply: `Mantido! Agora vamos ${isEditingStr ? 'revisar' : 'falar sobre'} as **Oportunidades de Melhoria**.${accumulatedData.improvements && isEditingStr ? `\n\n**Resposta anterior:** ${accumulatedData.improvements}` : `\n\nQuais áreas ${pronoun} poderia desenvolver?`}`,
             phaseState: { ...phaseState, phase: 'improvements' },
             accumulatedData,
             isComplete: false,
@@ -702,7 +702,7 @@ export function generateFallbackResponse(
         }
 
         return {
-          reply: `Obrigado! Agora vamos ${isEditingStr ? 'revisar' : 'falar sobre'} as **Oportunidades de Melhoria**.${accumulatedData.improvements && isEditingStr ? `\n\n**Resposta anterior:** ${accumulatedData.improvements}` : `\n\nQuais areas ${pronoun} poderia desenvolver? Que oportunidades de melhoria voce identifica?`}`,
+          reply: `Obrigado! Agora vamos ${isEditingStr ? 'revisar' : 'falar sobre'} as **Oportunidades de Melhoria**.${accumulatedData.improvements && isEditingStr ? `\n\n**Resposta anterior:** ${accumulatedData.improvements}` : `\n\nQuais áreas ${pronoun} poderia desenvolver? Que oportunidades de melhoria você identifica?`}`,
           phaseState: { ...phaseState, phase: 'improvements' },
           accumulatedData: { ...accumulatedData, strengths: userMessage },
           isComplete: false,
@@ -736,7 +736,7 @@ export function generateFallbackResponse(
             : ['Risco de Turn Over', 'Potencial Sucessao', 'Key Talent', 'High Potential', 'Nenhuma tag', 'Pronto']
 
           return {
-            reply: `Obrigado! Agora, selecione as tags que melhor descrevem **${subjectName}**.${isEditingImp && existingTags.length > 0 ? `\n\n**Tags atuais:** ${existingTags.map(t => TALENT_TAGS[t]?.label || t).join(', ')}` : ''} Voce pode selecionar mais de uma:`,
+            reply: `Obrigado! Agora, selecione as tags que melhor descrevem **${subjectName}**.${isEditingImp && existingTags.length > 0 ? `\n\n**Tags atuais:** ${existingTags.map(t => TALENT_TAGS[t]?.label || t).join(', ')}` : ''} Você pode selecionar mais de uma:`,
             phaseState: { ...phaseState, phase: 'tags' },
             accumulatedData: updatedData,
             isComplete: false,
@@ -753,7 +753,7 @@ export function generateFallbackResponse(
       }
 
       return {
-        reply: `${isEditingImp ? 'Revisando as' : 'Quais'} **Oportunidades de Melhoria**.${accumulatedData.improvements && isEditingImp ? `\n\n**Resposta anterior:** ${accumulatedData.improvements}` : ''}\n\nQuais areas ${pronoun} poderia desenvolver? Que oportunidades de melhoria voce identifica?`,
+        reply: `${isEditingImp ? 'Revisando as' : 'Quais'} **Oportunidades de Melhoria**.${accumulatedData.improvements && isEditingImp ? `\n\n**Resposta anterior:** ${accumulatedData.improvements}` : ''}\n\nQuais áreas ${pronoun} poderia desenvolver? Que oportunidades de melhoria você identifica?`,
         phaseState,
         accumulatedData,
         isComplete: false,
@@ -843,7 +843,7 @@ export function generateFallbackResponse(
     case 'review':
       if (userMessage.toLowerCase().includes('confirmar') || userMessage.toLowerCase().includes('finalizar') || userMessage.toLowerCase().includes('sim')) {
         return {
-          reply: 'Avaliacao concluida com sucesso! Os dados foram salvos. Obrigado pela sua participacao!',
+          reply: 'Avaliação concluída com sucesso! Os dados foram salvos. Obrigado pela sua participação!',
           phaseState: { ...phaseState, phase: 'complete' },
           accumulatedData,
           isComplete: true,
@@ -865,7 +865,7 @@ export function generateFallbackResponse(
           : labels
 
         return {
-          reply: `Sem problemas! Vamos revisar toda a avaliacao. Os valores atuais estarao sinalizados para facilitar.\n\nRevisando o valor **${firstValue}**${firstValueDesc ? ` - ${firstValueDesc}` : ''}.\n\n**Nota atual: ${existingFreq !== undefined ? existingFreq : '-'}/4** - Voce pode manter ou alterar.\n\nComo voce avalia ${pronoun} neste valor?`,
+          reply: `Sem problemas! Vamos revisar toda a avaliação. Os valores atuais estarão sinalizados para facilitar.\n\nRevisando o valor **${firstValue}**${firstValueDesc ? ` - ${firstValueDesc}` : ''}.\n\n**Nota atual: ${existingFreq !== undefined ? existingFreq : '-'}/4** - Você pode manter ou alterar.\n\nComo você avalia ${pronoun} neste valor?`,
           phaseState: { phase: 'culture', currentValueIndex: 0, currentBehaviorIndex: 0, waitingForFollowUp: false, isEditing: true },
           accumulatedData,
           isComplete: false,
@@ -873,7 +873,7 @@ export function generateFallbackResponse(
         }
       }
       return {
-        reply: 'Deseja confirmar a avaliacao ou fazer ajustes?',
+        reply: 'Deseja confirmar a avaliação ou fazer ajustes?',
         phaseState,
         accumulatedData,
         isComplete: false,
@@ -882,7 +882,7 @@ export function generateFallbackResponse(
 
     default:
       return {
-        reply: 'Avaliacao concluida!',
+        reply: 'Avaliação concluída!',
         phaseState,
         accumulatedData,
         isComplete: true,
@@ -893,7 +893,7 @@ export function generateFallbackResponse(
 function generateReviewMessage(oldData: AccumulatedData, newData: AccumulatedData, behaviors: BehaviorInfo[], evaluationType?: string): string {
   const data = { ...oldData, ...newData }
   const labels = ['Nunca', 'Raramente', 'As vezes', 'Sempre', 'Referencia']
-  let msg = 'Aqui esta o resumo da avaliacao:\n\n**Cultura:**\n'
+  let msg = 'Aqui está o resumo da avaliação:\n\n**Cultura:**\n'
   for (const b of data.behaviors) {
     const info = behaviors.find(bi => bi.id === b.behaviorId)
     msg += `- ${info?.valueName} / ${info?.description}: ${labels[b.frequency]} (${b.frequency}/4)\n`

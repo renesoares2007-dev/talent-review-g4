@@ -17,10 +17,15 @@ export default function ValoresPage() {
   const [values, setValues] = useState<CompanyValue[]>([])
   const [editing, setEditing] = useState<CompanyValue | null>(null)
   const [form, setForm] = useState({ name: '', description: '', behaviors: [{ description: '' }] as Behavior[] })
+  const [isBP, setIsBP] = useState(false)
 
   const loadValues = () => fetch('/api/values').then(r => r.json()).then(setValues)
 
-  useEffect(() => { loadValues() }, [])
+  useEffect(() => {
+    loadValues()
+    const stored = localStorage.getItem('user')
+    if (stored) { const u = JSON.parse(stored); setIsBP(u.isBP && !u.isAdmin) }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +59,7 @@ export default function ValoresPage() {
     <div>
       <h1 className="text-2xl font-bold text-g4-purple mb-6">Gestão de Valores da Empresa</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 mb-8">
+      {!isBP && <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow p-6 mb-8">
         <h2 className="text-lg font-semibold mb-4">{editing ? 'Editar Valor' : 'Novo Valor'}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
@@ -92,7 +97,7 @@ export default function ValoresPage() {
               className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-800">Cancelar</button>
           )}
         </div>
-      </form>
+      </form>}
 
       <div className="grid gap-4">
         {values.map(v => (
@@ -102,11 +107,11 @@ export default function ValoresPage() {
                 <h3 className="text-lg font-semibold text-g4-dark">{v.name}</h3>
                 <p className="text-gray-500 text-sm">{v.description}</p>
               </div>
-              <div className="flex gap-2">
+              {!isBP && <div className="flex gap-2">
                 <button onClick={() => { setEditing(v); setForm({ name: v.name, description: v.description, behaviors: v.behaviors.map(b => ({ description: b.description })) }) }}
                   className="text-sm text-g4-purple hover:text-g4-purple-dark">Editar</button>
                 <button onClick={() => handleDelete(v.id)} className="text-sm text-red-600 hover:text-red-800">Excluir</button>
-              </div>
+              </div>}
             </div>
             {v.behaviors.length > 0 && (
               <div className="mt-3">

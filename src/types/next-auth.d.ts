@@ -7,6 +7,7 @@ declare module 'next-auth' {
     department?: string
     isAdmin?: boolean
     isManager?: boolean
+    isBP?: boolean
   }
 
   interface Session {
@@ -18,6 +19,7 @@ declare module 'next-auth' {
       department: string
       isAdmin: boolean
       isManager: boolean
+      isBP: boolean
       image?: string | null
     }
   }
@@ -30,5 +32,6 @@ declare module 'next-auth/jwt' {
     department?: string
     isAdmin?: boolean
     isManager?: boolean
+    isBP?: boolean
   }
 }

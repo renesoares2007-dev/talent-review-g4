@@ -77,7 +77,7 @@ function ReportContent() {
     doc.setFontSize(18)
     doc.setTextColor(255, 255, 255)
     doc.setFont('helvetica', 'bold')
-    doc.text('Relatorio de Avaliacao', margin, 15)
+    doc.text('Relatório de Avaliação', margin, 15)
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
     doc.text(`${(employee as Record<string, string>)?.name || ''} - ${(employee as Record<string, string>)?.role || ''}`, margin, 25)
@@ -90,7 +90,7 @@ function ReportContent() {
 
     // Evaluations
     for (const ev of evaluations) {
-      const typeLabel = (ev.type as string) === 'self' ? 'Autoavaliacao' : (ev.type as string) === 'manager' ? 'Gestor' : 'Stakeholder'
+      const typeLabel = (ev.type as string) === 'self' ? 'Autoavaliação' : (ev.type as string) === 'manager' ? 'Gestor' : 'Stakeholder'
       const evalName = (ev.evaluator as Record<string, string>)?.name || ''
       addText(`${typeLabel} - ${evalName}  (C: ${(ev.cultureScore as number)?.toFixed(1) || '-'} | R: ${(ev.resultsScore as number)?.toFixed(1) || '-'})`, 11, [26, 39, 68], true)
       y += 2
@@ -99,7 +99,7 @@ function ReportContent() {
       y += 4
     }
 
-    if (result.aiAnalysis) addSection('Analise Consolidada', result.aiAnalysis as string)
+    if (result.aiAnalysis) addSection('Análise Consolidada', result.aiAnalysis as string)
     if (result.aiFeedback) addSection('Feedback (IA)', result.aiFeedback as string)
     if (result.aiPDI) addSection('PDI (IA)', result.aiPDI as string)
 
@@ -110,20 +110,20 @@ function ReportContent() {
       doc.setFontSize(8)
       doc.setTextColor(150, 150, 150)
       doc.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')} - Talent Review G4`, margin, 290)
-      doc.text(`Pagina ${i}/${totalPages}`, pageWidth - margin - 20, 290)
+      doc.text(`Página ${i}/${totalPages}`, pageWidth - margin - 20, 290)
     }
 
     const empName = ((employee as Record<string, string>)?.name || 'relatorio').toLowerCase().replace(/\s+/g, '-')
     doc.save(`relatorio-${empName}.pdf`)
   }
 
-  if (loading) return <div className="text-center py-12 text-gray-400">Carregando relatorio...</div>
+  if (loading) return <div className="text-center py-12 text-gray-400">Carregando relatório...</div>
   if (!result) return <div className="text-center py-12 text-gray-400">Nenhum resultado consolidado encontrado.</div>
 
   return (
     <div className="max-w-4xl mx-auto" id="report">
       <div className="flex justify-between items-center mb-6 print:hidden">
-        <h1 className="text-2xl font-bold text-g4-purple">Relatorio de Avaliacao</h1>
+        <h1 className="text-2xl font-bold text-g4-purple">Relatório de Avaliação</h1>
         <button onClick={handleDownloadPDF}
           className="bg-g4-purple text-white px-4 py-2 rounded-lg hover:bg-g4-purple-dark flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -143,7 +143,7 @@ function ReportContent() {
           <div><span className="text-gray-500">Resultados:</span> <strong className="text-gray-800">{(result.resultsScore as number)?.toFixed(2)}/4</strong></div>
         </div>
         <div className="mt-4">
-          <span className="text-sm text-gray-500">Classificacao Ninebox:</span>
+          <span className="text-sm text-gray-500">Classificação Ninebox:</span>
           <span className="ml-2 px-3 py-1 rounded text-white text-sm font-semibold" style={{ backgroundColor: pos.color }}>
             {pos.label}
           </span>
@@ -152,13 +152,13 @@ function ReportContent() {
 
       {/* Evaluations Summary */}
       <div className="bg-white rounded-xl shadow p-6 mb-6">
-        <h3 className="text-lg font-semibold text-g4-dark mb-4">Resumo das Avaliacoes</h3>
+        <h3 className="text-lg font-semibold text-g4-dark mb-4">Resumo das Avaliações</h3>
         <div className="space-y-4">
           {evaluations.map((ev, i) => (
             <div key={i} className="border border-gray-200 rounded-lg p-4">
               <div className="flex justify-between items-center mb-2">
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${(ev.type as string) === 'self' ? 'bg-blue-100 text-blue-800' : (ev.type as string) === 'manager' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
-                  {(ev.type as string) === 'self' ? 'Autoavaliacao' : (ev.type as string) === 'manager' ? 'Gestor' : 'Stakeholder'}
+                  {(ev.type as string) === 'self' ? 'Autoavaliação' : (ev.type as string) === 'manager' ? 'Gestor' : 'Stakeholder'}
                   {' - '}{((ev.evaluator as Record<string, string>)?.name)}
                 </span>
                 <span className="text-sm text-gray-500">
@@ -185,7 +185,7 @@ function ReportContent() {
       {/* AI Analysis */}
       {(result.aiAnalysis as string) && (
         <div className="bg-white rounded-xl shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold text-g4-dark mb-3">Analise Consolidada</h3>
+          <h3 className="text-lg font-semibold text-g4-dark mb-3">Análise Consolidada</h3>
           <p className="text-sm text-gray-700 whitespace-pre-wrap">{result.aiAnalysis as string}</p>
         </div>
       )}

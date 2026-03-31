@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
   })
 
   if (pendingEvals.length === 0) {
-    return NextResponse.json({ success: true, message: 'Nenhuma avaliacao pendente', sent: 0 })
+    return NextResponse.json({ success: true, message: 'Nenhuma avaliação pendente', sent: 0 })
   }
 
   // Group by evaluator
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
   if ((mode === 'dm' || mode === 'both') && config.botToken) {
     for (const [, person] of byEvaluator) {
       const blocks = buildPendingNotificationBlocks(person.name, cycle.name, person.evals)
-      const text = `Voce tem ${person.evals.length} avaliacao(oes) pendente(s) no ciclo ${cycle.name}`
+      const text = `Você tem ${person.evals.length} avaliação(ões) pendente(s) no ciclo ${cycle.name}`
       const ok = await sendSlackDM(config, person.email, { text, blocks })
       if (ok) dmsSent++
       else dmsFailed++
